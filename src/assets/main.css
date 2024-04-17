@@ -1,887 +1,138 @@
 @charset "UTF-8";
-
-/*
-! tailwindcss v3.4.3 | MIT License | https://tailwindcss.com
-*/
-
-/*
-1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
-2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
-*/
-
-*,
-::before,
-::after {
-  box-sizing: border-box;
-  /* 1 */
-  border-width: 0;
-  /* 2 */
-  border-style: solid;
-  /* 2 */
-  border-color: #e5e7eb;
-  /* 2 */
-}
-
-::before,
-::after {
-  --tw-content: '';
-}
-
-/*
-1. Use a consistent sensible line-height in all browsers.
-2. Prevent adjustments of font size after orientation changes in iOS.
-3. Use a more readable tab size.
-4. Use the user's configured `sans` font-family by default.
-5. Use the user's configured `sans` font-feature-settings by default.
-6. Use the user's configured `sans` font-variation-settings by default.
-7. Disable tap highlights on iOS
-*/
-
 html,
-:host {
-  line-height: 1.5;
-  /* 1 */
-  -webkit-text-size-adjust: 100%;
-  /* 2 */
-  -moz-tab-size: 4;
-  /* 3 */
-  -o-tab-size: 4;
-     tab-size: 4;
-  /* 3 */
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  /* 4 */
-  font-feature-settings: normal;
-  /* 5 */
-  font-variation-settings: normal;
-  /* 6 */
-  -webkit-tap-highlight-color: transparent;
-  /* 7 */
-}
-
-/*
-1. Remove the margin in all browsers.
-2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
-*/
-
-body {
+body,
+#root {
+  height: 100%;
   margin: 0;
-  /* 1 */
-  line-height: inherit;
-  /* 2 */
+  user-select: none;
 }
 
-/*
-1. Add the correct height in Firefox.
-2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
-3. Ensure horizontal rules are visible by default.
-*/
-
-hr {
-  height: 0;
-  /* 1 */
-  color: inherit;
-  /* 2 */
-  border-top-width: 1px;
-  /* 3 */
+#cursor {
+  pointer-events: none;
+  position: fixed;
+}
+#cursor svg {
+  display: none;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  transform: translateY(-100%);
+  -webkit-transform: translateY(-100%);
+  -moz-transform: translateY(-100%);
+  -ms-transform: translateY(-100%);
+  -o-transform: translateY(-100%);
+  filter: drop-shadow(3px 0px 3px rgba(0, 0, 0, 0.4));
+  -webkit-filter: drop-shadow(3px 0px 3px rgba(0, 0, 0, 0.4));
+}
+#cursor[drawmode] svg {
+  display: unset;
 }
 
-/*
-Add the correct text decoration in Chrome, Edge, and Safari.
-*/
-
-abbr:where([title]) {
-  -webkit-text-decoration: underline dotted;
-          text-decoration: underline dotted;
-}
-
-/*
-Remove the default font size and weight for headings.
-*/
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-size: inherit;
-  font-weight: inherit;
-}
-
-/*
-Reset links to optimize for opt-in styling instead of opt-out.
-*/
-
-a {
-  color: inherit;
-  text-decoration: inherit;
-}
-
-/*
-Add the correct font weight in Edge and Safari.
-*/
-
-b,
-strong {
-  font-weight: bolder;
-}
-
-/*
-1. Use the user's configured `mono` font-family by default.
-2. Use the user's configured `mono` font-feature-settings by default.
-3. Use the user's configured `mono` font-variation-settings by default.
-4. Correct the odd `em` font sizing in all browsers.
-*/
-
-code,
-kbd,
-samp,
-pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  /* 1 */
-  font-feature-settings: normal;
-  /* 2 */
-  font-variation-settings: normal;
-  /* 3 */
-  font-size: 1em;
-  /* 4 */
-}
-
-/*
-Add the correct font size in all browsers.
-*/
-
-small {
-  font-size: 80%;
-}
-
-/*
-Prevent `sub` and `sup` elements from affecting the line height in all browsers.
-*/
-
-sub,
-sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
-
-sub {
-  bottom: -0.25em;
-}
-
-sup {
-  top: -0.5em;
-}
-
-/*
-1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
-2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
-3. Remove gaps between table borders by default.
-*/
-
-table {
-  text-indent: 0;
-  /* 1 */
-  border-color: inherit;
-  /* 2 */
-  border-collapse: collapse;
-  /* 3 */
-}
-
-/*
-1. Change the font styles in all browsers.
-2. Remove the margin in Firefox and Safari.
-3. Remove default padding in all browsers.
-*/
-
-button,
-input,
-optgroup,
-select,
-textarea {
-  font-family: inherit;
-  /* 1 */
-  font-feature-settings: inherit;
-  /* 1 */
-  font-variation-settings: inherit;
-  /* 1 */
-  font-size: 100%;
-  /* 1 */
-  font-weight: inherit;
-  /* 1 */
-  line-height: inherit;
-  /* 1 */
-  letter-spacing: inherit;
-  /* 1 */
-  color: inherit;
-  /* 1 */
-  margin: 0;
-  /* 2 */
-  padding: 0;
-  /* 3 */
-}
-
-/*
-Remove the inheritance of text transform in Edge and Firefox.
-*/
-
-button,
-select {
-  text-transform: none;
-}
-
-/*
-1. Correct the inability to style clickable types in iOS and Safari.
-2. Remove default button styles.
-*/
-
-button,
-input:where([type='button']),
-input:where([type='reset']),
-input:where([type='submit']) {
-  -webkit-appearance: button;
-  /* 1 */
-  background-color: transparent;
-  /* 2 */
-  background-image: none;
-  /* 2 */
-}
-
-/*
-Use the modern Firefox focus style for all focusable elements.
-*/
-
-:-moz-focusring {
-  outline: auto;
-}
-
-/*
-Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
-*/
-
-:-moz-ui-invalid {
-  box-shadow: none;
-}
-
-/*
-Add the correct vertical alignment in Chrome and Firefox.
-*/
-
-progress {
-  vertical-align: baseline;
-}
-
-/*
-Correct the cursor style of increment and decrement buttons in Safari.
-*/
-
-::-webkit-inner-spin-button,
-::-webkit-outer-spin-button {
-  height: auto;
-}
-
-/*
-1. Correct the odd appearance in Chrome and Safari.
-2. Correct the outline style in Safari.
-*/
-
-[type='search'] {
-  -webkit-appearance: textfield;
-  /* 1 */
-  outline-offset: -2px;
-  /* 2 */
-}
-
-/*
-Remove the inner padding in Chrome and Safari on macOS.
-*/
-
-::-webkit-search-decoration {
-  -webkit-appearance: none;
-}
-
-/*
-1. Correct the inability to style clickable types in iOS and Safari.
-2. Change font properties to `inherit` in Safari.
-*/
-
-::-webkit-file-upload-button {
-  -webkit-appearance: button;
-  /* 1 */
-  font: inherit;
-  /* 2 */
-}
-
-/*
-Add the correct display in Chrome and Safari.
-*/
-
-summary {
-  display: list-item;
-}
-
-/*
-Removes the default spacing and border for appropriate elements.
-*/
-
-blockquote,
-dl,
-dd,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-hr,
-figure,
-p,
-pre {
-  margin: 0;
-}
-
-fieldset {
-  margin: 0;
-  padding: 0;
-}
-
-legend {
-  padding: 0;
-}
-
-ol,
-ul,
-menu {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/*
-Reset default styling for dialogs.
-*/
-
-dialog {
-  padding: 0;
-}
-
-/*
-Prevent resizing textareas horizontally by default.
-*/
-
-textarea {
-  resize: vertical;
-}
-
-/*
-1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
-2. Set the default placeholder color to the user's configured gray 400 color.
-*/
-
-input::-moz-placeholder, textarea::-moz-placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
-}
-
-input::placeholder,
-textarea::placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
-}
-
-/*
-Set the default cursor for buttons.
-*/
-
-button,
-[role="button"] {
-  cursor: pointer;
-}
-
-/*
-Make sure disabled buttons don't get the pointer cursor.
-*/
-
-:disabled {
-  cursor: default;
-}
-
-/*
-1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
-2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
-   This can trigger a poorly considered lint error in some tools but is included by design.
-*/
-
-img,
-svg,
-video,
-canvas,
-audio,
-iframe,
-embed,
-object {
-  display: block;
-  /* 1 */
-  vertical-align: middle;
-  /* 2 */
-}
-
-/*
-Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
-*/
-
-img,
-video {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Make elements with the HTML hidden attribute stay hidden by default */
-
+.hidden,
 [hidden] {
   display: none;
 }
 
-*, ::before, ::after{
-  --tw-border-spacing-x: 0;
-  --tw-border-spacing-y: 0;
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  --tw-pan-x:  ;
-  --tw-pan-y:  ;
-  --tw-pinch-zoom:  ;
-  --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position:  ;
-  --tw-gradient-via-position:  ;
-  --tw-gradient-to-position:  ;
-  --tw-ordinal:  ;
-  --tw-slashed-zero:  ;
-  --tw-numeric-figure:  ;
-  --tw-numeric-spacing:  ;
-  --tw-numeric-fraction:  ;
-  --tw-ring-inset:  ;
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
-  --tw-ring-offset-shadow: 0 0 #0000;
-  --tw-ring-shadow: 0 0 #0000;
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  --tw-blur:  ;
-  --tw-brightness:  ;
-  --tw-contrast:  ;
-  --tw-grayscale:  ;
-  --tw-hue-rotate:  ;
-  --tw-invert:  ;
-  --tw-saturate:  ;
-  --tw-sepia:  ;
-  --tw-drop-shadow:  ;
-  --tw-backdrop-blur:  ;
-  --tw-backdrop-brightness:  ;
-  --tw-backdrop-contrast:  ;
-  --tw-backdrop-grayscale:  ;
-  --tw-backdrop-hue-rotate:  ;
-  --tw-backdrop-invert:  ;
-  --tw-backdrop-opacity:  ;
-  --tw-backdrop-saturate:  ;
-  --tw-backdrop-sepia:  ;
-  --tw-contain-size:  ;
-  --tw-contain-layout:  ;
-  --tw-contain-paint:  ;
-  --tw-contain-style:  ;
+canvas {
+  cursor: none;
 }
 
-::backdrop{
-  --tw-border-spacing-x: 0;
-  --tw-border-spacing-y: 0;
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  --tw-pan-x:  ;
-  --tw-pan-y:  ;
-  --tw-pinch-zoom:  ;
-  --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position:  ;
-  --tw-gradient-via-position:  ;
-  --tw-gradient-to-position:  ;
-  --tw-ordinal:  ;
-  --tw-slashed-zero:  ;
-  --tw-numeric-figure:  ;
-  --tw-numeric-spacing:  ;
-  --tw-numeric-fraction:  ;
-  --tw-ring-inset:  ;
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
-  --tw-ring-offset-shadow: 0 0 #0000;
-  --tw-ring-shadow: 0 0 #0000;
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  --tw-blur:  ;
-  --tw-brightness:  ;
-  --tw-contrast:  ;
-  --tw-grayscale:  ;
-  --tw-hue-rotate:  ;
-  --tw-invert:  ;
-  --tw-saturate:  ;
-  --tw-sepia:  ;
-  --tw-drop-shadow:  ;
-  --tw-backdrop-blur:  ;
-  --tw-backdrop-brightness:  ;
-  --tw-backdrop-contrast:  ;
-  --tw-backdrop-grayscale:  ;
-  --tw-backdrop-hue-rotate:  ;
-  --tw-backdrop-invert:  ;
-  --tw-backdrop-opacity:  ;
-  --tw-backdrop-saturate:  ;
-  --tw-backdrop-sepia:  ;
-  --tw-contain-size:  ;
-  --tw-contain-layout:  ;
-  --tw-contain-paint:  ;
-  --tw-contain-style:  ;
+body svg {
+  width: 20px;
+  height: 20px;
 }
-
-.btn-default{
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 9999px;
-  --tw-bg-opacity: 1;
-  background-color: rgb(100 116 139 / var(--tw-bg-opacity));
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+body input,
+body button {
+  outline: none;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
 }
-
-.btn-default:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+body progress {
+  padding: 1rem;
+  appearance: none;
+  -webkit-appearance: none;
 }
-
-.btn-default:focus{
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-color: rgb(148 163 184 / var(--tw-ring-opacity));
-  --tw-ring-opacity: 0.75;
+body progress::-webkit-progress-bar {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 0.3rem;
+  -webkit-border-radius: 0.3rem;
+  -moz-border-radius: 0.3rem;
+  -ms-border-radius: 0.3rem;
+  -o-border-radius: 0.3rem;
+  height: 30px;
 }
-
-.btn-primary{
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 9999px;
-  --tw-bg-opacity: 1;
-  background-color: rgb(139 92 246 / var(--tw-bg-opacity));
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+body progress::-webkit-progress-value {
+  background: repeating-linear-gradient(-45deg, #04aa6d, #04aa6d 10px, #5ac19b 10px, #5ac19b 20px);
+  border-radius: 0.3rem;
+  -webkit-border-radius: 0.3rem;
+  -moz-border-radius: 0.3rem;
+  -ms-border-radius: 0.3rem;
+  -o-border-radius: 0.3rem;
+  animation: "move-stripes" 2s linear infinite;
+  -webkit-animation: "move-stripes" 2s linear infinite;
 }
-
-.btn-primary:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(109 40 217 / var(--tw-bg-opacity));
-}
-
-.btn-primary:focus{
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-color: rgb(167 139 250 / var(--tw-ring-opacity));
-  --tw-ring-opacity: 0.75;
-}
-
-.btn-info{
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 9999px;
-  --tw-bg-opacity: 1;
-  background-color: rgb(14 165 233 / var(--tw-bg-opacity));
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.btn-info:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(3 105 161 / var(--tw-bg-opacity));
-}
-
-.btn-info:focus{
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-opacity: 0.75;
-  --tw-ring-offset-color: #38bdf8;
-}
-
-.btn-error{
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 9999px;
-  --tw-bg-opacity: 1;
-  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.btn-error:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(185 28 28 / var(--tw-bg-opacity));
-}
-
-.btn-error:focus{
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-opacity: 0.75;
-  --tw-ring-offset-color: #ef4444;
-}
-
-.input-style{
-  display: block;
-  width: 100%;
-  border-radius: 0.375rem;
-  border-width: 0px;
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
-  --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity));
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(209 213 219 / var(--tw-ring-opacity));
-}
-
-@media (min-width: 640px){
-  .input-style{
-    font-size: 1rem;
-    line-height: 1.25rem;
+@keyframes move-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100px 0;
   }
 }
-
-.wrapped {
-  width: -moz-available;
-  width: -webkit-fill-available;
-  width: fill-available;
+body input[type=number] {
+  border: 1px solid #ccc;
+  width: 50px;
+}
+body button {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  column-gap: 8px;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  /* style */
+  border: none;
+  background-color: #666666;
+  color: #fff;
+  box-shadow: inset 5px 5px 1rem 0px #555, inset -5px -5px 1rem 0px #777, 2px 2px 5px 0px #777, -2px -2px 5px 0px #eee;
 }
 
-.absolute{
-  position: absolute;
-}
-
-.relative{
+[data-tool] {
   position: relative;
 }
 
-.left-1\/2{
+[data-tool=create-page]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
   left: 50%;
-}
-
-.z-0{
-  z-index: 0;
-}
-
-.z-10{
-  z-index: 10;
-}
-
-.mx-auto{
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.my-5{
-  margin-top: 1.25rem;
-  margin-bottom: 1.25rem;
-}
-
-.inline-block{
-  display: inline-block;
-}
-
-.flex{
-  display: flex;
-}
-
-.inline-flex{
-  display: inline-flex;
-}
-
-.hidden{
-  display: none;
-}
-
-.h-4{
-  height: 1rem;
-}
-
-.h-6{
-  height: 1.5rem;
-}
-
-.w-14{
-  width: 3.5rem;
-}
-
-.w-4{
-  width: 1rem;
-}
-
-.w-6{
-  width: 1.5rem;
-}
-
-.-translate-x-1\/2{
-  --tw-translate-x: -50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.flex-col{
-  flex-direction: column;
-}
-
-.items-center{
-  align-items: center;
-}
-
-.justify-center{
-  justify-content: center;
-}
-
-.gap-1{
-  gap: 0.25rem;
-}
-
-.gap-2{
-  gap: 0.5rem;
-}
-
-.gap-3{
-  gap: 0.75rem;
-}
-
-.border{
-  border-width: 1px;
-}
-
-.border-gray-500{
-  --tw-border-opacity: 1;
-  border-color: rgb(107 114 128 / var(--tw-border-opacity));
-}
-
-.bg-white{
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.p-3{
-  padding: 0.75rem;
-}
-
-.ps-2{
-  padding-inline-start: 0.5rem;
-}
-
-.font-bold{
+  white-space: nowrap;
+  font-size: 0.75rem;
   font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "페이지 생성";
 }
-
-.uppercase{
-  text-transform: uppercase;
-}
-
-html,
-body {
-  overflow: hidden;
-  height: 100%;
-  margin: 0;
-  background: #555;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
-}
-
-@keyframes bottom-fade {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 0%);
-    -webkit-transform: translate(-50%, 0%);
-    -moz-transform: translate(-50%, 0%);
-    -ms-transform: translate(-50%, 0%);
-    -o-transform: translate(-50%, 0%);
-  }
-
+@keyframes place-bottom {
   100% {
     opacity: 1;
     transform: translate(-50%, 20%);
@@ -892,691 +143,783 @@ body {
   }
 }
 
-@keyframes top-fade {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 0%);
-    -webkit-transform: translate(-50%, 0%);
-    -moz-transform: translate(-50%, 0%);
-    -ms-transform: translate(-50%, 0%);
-    -o-transform: translate(-50%, 0%);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -20%);
-    -webkit-transform: translate(-50%, -20%);
-    -moz-transform: translate(-50%, -20%);
-    -ms-transform: translate(-50%, -20%);
-    -o-transform: translate(-50%, -20%);
-  }
-}
-
-@keyframes left-fade {
-  0% {
-    opacity: 0;
-    transform: translate(0%, -50%);
-    -webkit-transform: translate(0%, -50%);
-    -moz-transform: translate(0%, -50%);
-    -ms-transform: translate(0%, -50%);
-    -o-transform: translate(0%, -50%);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translate(-20%, -50%);
-    -webkit-transform: translate(-20%, -50%);
-    -moz-transform: translate(-20%, -50%);
-    -ms-transform: translate(-20%, -50%);
-    -o-transform: translate(-20%, -50%);
-  }
-}
-
-@keyframes right-fade {
-  0% {
-    opacity: 0;
-    transform: translate(0%, -50%);
-    -webkit-transform: translate(0%, -50%);
-    -moz-transform: translate(0%, -50%);
-    -ms-transform: translate(0%, -50%);
-    -o-transform: translate(0%, -50%);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translate(20%, -50%);
-    -webkit-transform: translate(20%, -50%);
-    -moz-transform: translate(20%, -50%);
-    -ms-transform: translate(20%, -50%);
-    -o-transform: translate(20%, -50%);
-  }
-}
-
-[data-tool=create-page] {
-  position: relative;
-}
-
-[data-tool=create-page]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=create-page]:hover::after {
-  content: "페이지 생성";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=copy-page] {
-  position: relative;
-}
-
-[data-tool=copy-page]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
 [data-tool=copy-page]:hover::after {
-  content: "페이지 복사";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
   white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
   transform: translate(-50%, 0%);
   -webkit-transform: translate(-50%, 0%);
   -moz-transform: translate(-50%, 0%);
   -ms-transform: translate(-50%, 0%);
   -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
+  content: "페이지 복사";
 }
-
-[data-tool=paste-page] {
-  position: relative;
-}
-
-[data-tool=paste-page]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
 }
 
 [data-tool=paste-page]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
   content: "페이지 붙여넣기";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
 }
-
-[data-tool=delete-page] {
-  position: relative;
-}
-
-[data-tool=delete-page]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=delete-page]:hover::after {
-  content: "페이지 삭제";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=save] {
-  position: relative;
-}
-
-[data-tool=save]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=save]:hover::after {
-  content: "데이터 저장";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=load] {
-  position: relative;
-}
-
-[data-tool=load]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=load]:hover::after {
-  content: "데이터 가져오기";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=prev-page] {
-  position: relative;
-}
-
-[data-tool=prev-page]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  right: 70%;
-  top: 50%;
-}
-
-[data-tool=prev-page]:hover::after {
-  content: "이전 페이지";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: left-fade 150ms ease-in-out both;
-  -webkit-animation: left-fade 150ms ease-in-out both;
-  transform: translate(0%, -50%);
-  -webkit-transform: translate(0%, -50%);
-  -moz-transform: translate(0%, -50%);
-  -ms-transform: translate(0%, -50%);
-  -o-transform: translate(0%, -50%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=next-page] {
-  position: relative;
-}
-
-[data-tool=next-page]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 70%;
-  top: 50%;
-}
-
-[data-tool=next-page]:hover::after {
-  content: "다음 페이지";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: right-fade 150ms ease-in-out both;
-  -webkit-animation: right-fade 150ms ease-in-out both;
-  transform: translate(0%, -50%);
-  -webkit-transform: translate(0%, -50%);
-  -moz-transform: translate(0%, -50%);
-  -ms-transform: translate(0%, -50%);
-  -o-transform: translate(0%, -50%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=play] {
-  position: relative;
-}
-
-[data-tool=play]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=play]:hover::after {
-  content: "재생";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=gif-repeat][repeat] {
-  position: relative;
-}
-
-[data-tool=gif-repeat][repeat]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=gif-repeat][repeat]:hover::after {
-  content: "GIF 반복";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=gif-repeat]:not([repeat]) {
-  position: relative;
-}
-
-[data-tool=gif-repeat]:not([repeat])::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=gif-repeat]:not([repeat]):hover::after {
-  content: "GIF 미반복";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=use-repeat-delay][use] {
-  position: relative;
-}
-
-[data-tool=use-repeat-delay][use]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=use-repeat-delay][use]:hover::after {
-  content: "GIF 딜레이 반복 사용";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=use-repeat-delay]:not([use]) {
-  position: relative;
-}
-
-[data-tool=use-repeat-delay]:not([use])::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=use-repeat-delay]:not([use]):hover::after {
-  content: "GIF 딜레이 반복 미사용";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=export-gif] {
-  position: relative;
-}
-
-[data-tool=export-gif]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  top: 70%;
-  margin-top: 0.3rem;
-}
-
-[data-tool=export-gif]:hover::after {
-  content: "GIF로 내보내기";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: bottom-fade 150ms ease-in-out both;
-  -webkit-animation: bottom-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=pen] {
-  position: relative;
-}
-
-[data-tool=pen]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  bottom: 70%;
-  margin-bottom: 0.3rem;
-}
-
-[data-tool=pen]:hover::after {
-  content: "연필";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: top-fade 150ms ease-in-out both;
-  -webkit-animation: top-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=erase] {
-  position: relative;
-}
-
-[data-tool=erase]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  bottom: 70%;
-  margin-bottom: 0.3rem;
-}
-
-[data-tool=erase]:hover::after {
-  content: "지우개";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: top-fade 150ms ease-in-out both;
-  -webkit-animation: top-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-[data-tool=all-erase] {
-  position: relative;
-}
-
-[data-tool=all-erase]::after {
-  opacity: 0;
-  position: absolute;
-  content: "";
-  left: 50%;
-  bottom: 70%;
-  margin-bottom: 0.3rem;
-}
-
-[data-tool=all-erase]:hover::after {
-  content: "화면 지우기";
-  font-size: 0.75rem;
-  background-color: rgba(0, 0, 0, 0.6509803922);
-  color: white;
-  padding: 0.3rem 0.5rem;
-  width: auto;
-  white-space: nowrap;
-  animation: top-fade 150ms ease-in-out both;
-  -webkit-animation: top-fade 150ms ease-in-out both;
-  transform: translate(-50%, 0%);
-  -webkit-transform: translate(-50%, 0%);
-  -moz-transform: translate(-50%, 0%);
-  -ms-transform: translate(-50%, 0%);
-  -o-transform: translate(-50%, 0%);
-  border-radius: 0.3rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  -ms-border-radius: 0.3rem;
-  -o-border-radius: 0.3rem;
-}
-
-/* #tools {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-}
-
-#wrap {
-  display: flex;
-  justify-content: center;
-  width: 640px;
-  margin: auto;
-  background-color: #ffffff;
-  height: 320px;
-
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    -webkit-transform: translateX(-50%);
-    -moz-transform: translateX(-50%);
-    -ms-transform: translateX(-50%);
-    -o-transform: translateX(-50%);
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
   }
 }
 
-[data-tool="page"] {
-  display: inline-block;
-  width: 30px;
-} */
+[data-tool=delete-page]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "페이지 삭제";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=save]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "저장";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=load]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "불러오기";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=gif-repeat][repeat]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "GIF 반복 사용";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=gif-repeat]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "GIF 반복 미사용";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=use-repeat-delay][use]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "반복 지연 시간(초) 사용";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=use-repeat-delay]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "반복 지연 시간(초) 미사용";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=export-gif]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "GIF 내보내기";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=pen]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "연필";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=erase]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "지우개";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=all-erase]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "모두 지우기";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=play][play]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "정지";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=play]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "재생";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=prev-page]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "이전 페이지";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=next-page]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "다음 페이지";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+[data-tool=total]:hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "전체 페이지";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+div:has(> [data-tool]) {
+  position: relative;
+}
+
+div:has(> [data-tool=page]):hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "현재 페이지";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+div:has(> [data-tool=thickness]):hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "두께";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}
+
+div:has(> [data-tool=fps]):hover::after {
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  border-radius: 0.2rem;
+  -webkit-border-radius: 0.2rem;
+  -moz-border-radius: 0.2rem;
+  -ms-border-radius: 0.2rem;
+  -o-border-radius: 0.2rem;
+  animation: "place-bottom" 150ms ease-in-out both;
+  -webkit-animation: "place-bottom" 150ms ease-in-out both;
+  transform: translate(-50%, 0%);
+  -webkit-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  content: "초당 프레임";
+}
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 20%);
+    -webkit-transform: translate(-50%, 20%);
+    -moz-transform: translate(-50%, 20%);
+    -ms-transform: translate(-50%, 20%);
+    -o-transform: translate(-50%, 20%);
+  }
+}

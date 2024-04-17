@@ -20,7 +20,7 @@ export class Toon {
       this.id = "toon-" + v4();
       this.title = titleOrToon || "empty title";
       this.description = description || "empty description";
-      this.document = document || new AniDocument();
+      this.document = document || new AniDocument("empty title");
     } else {
       this.id = titleOrToon.id;
       this.title = titleOrToon.title || "empty title";

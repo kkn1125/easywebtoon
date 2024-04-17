@@ -1,5 +1,4 @@
 import { AUTHOR, VERSION } from "../global/env";
-import { AniDocument } from "../models/ani.document";
 import { Toon } from "../models/toon";
 
 interface IEasyWebtoonStorage {

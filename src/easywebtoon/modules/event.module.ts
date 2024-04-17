@@ -1,39 +1,18 @@
 import GIF from "gif.js";
-import { DEFAULT_ERASE_SIZE, DEFAULT_THICKNESS } from "../global/env";
 import {
-  allEraseTool,
-  canvas,
-  clearBtn,
-  ctx,
-  currentPage,
-  deleteBtn,
-  eraseTool,
-  exportGifBtn,
-  fpsBar,
-  gifRepeat,
-  loadBtn,
-  nextBtn,
-  nextCanvas,
-  nextCtx,
-  penTool,
-  playBtn,
-  prevBtn,
-  prevCanvas,
-  prevCtx,
-  repeatDelay,
-  saveBtn,
-  thicknessBar,
-  totalPage,
-  useRepeatDelay,
-} from "../global/variables";
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  DEFAULT_ERASE_SIZE,
+  DEFAULT_THICKNESS,
+} from "../global/env";
+import { AnimatorModule } from "./animator.module";
 import { DataModule } from "./data.module";
-import { Animator } from "../models/animator";
+import { ToolModule } from "./tool.module";
 
 export class EventModule {
-  // dataModule!: DataModule;
-  // animator!: Animator;
   modules!: {
-    animator: Animator;
+    toolModule: ToolModule;
+    animatorModule: AnimatorModule;
     dataModule: DataModule;
   };
 
@@ -57,14 +36,30 @@ export class EventModule {
 
   playReady: number = 0;
 
+  eventList: { name: string; event: EventListener }[] = [];
+
+  setupCanvas() {
+    const canvas = this.modules.animatorModule.canvas;
+    const prevCanvas = this.modules.animatorModule.prevCanvas;
+    const nextCanvas = this.modules.animatorModule.nextCanvas;
+    const wrap = document.getElementById("wrap");
+    if (wrap) {
+      wrap.append(nextCanvas, prevCanvas, canvas);
+    }
+  }
+
   initialize() {
+    const thicknessBar = document.querySelector<HTMLInputElement>(
+      '[data-tool="thickness"]'
+    ) as HTMLInputElement;
+    if (!thicknessBar) throw "No thickness Element.";
     this.setupListener();
     this.setLineWidth(+(thicknessBar.value = "" + this.thickness));
     this.resizeCanvas();
     this.modules.dataModule.currentToon.document.requestPageUpdate();
   }
 
-  use<T extends DataModule | Animator>(module: T) {
+  use<T extends ToolModule | DataModule | AnimatorModule>(module: T) {
     function lowerCase(word: string) {
       return word[0].toLowerCase() + word.slice(1);
     }
@@ -74,44 +69,52 @@ export class EventModule {
     this.modules[lowerCase(module.constructor.name)] = module;
   }
 
+  destroy() {
+    for (const { name, event } of this.eventList) {
+      window.removeEventListener(name, event);
+    }
+    this.eventList = [];
+  }
+
   private setupListener() {
-    // useRepeatDelay.addEventListener(
-    //   "click",
-    //   this.toggleUseRepeatDelay.bind(this)
-    // );
-    // thicknessBar.addEventListener("change", this.updateThickness.bind(this));
-    // repeatDelay.addEventListener("change", this.handleRepeatDelay.bind(this));
-    // fpsBar.addEventListener("change", this.updateFPS.bind(this));
-    // currentPage.addEventListener("change", this.handleCurrentPage.bind(this));
-
-    // gifRepeat.addEventListener("click", this.toggleRepeatable.bind(this));
-    // exportGifBtn.addEventListener("click", this.exportGif.bind(this));
-
-    // playBtn.addEventListener("click", this.handlePlay.bind(this));
-    // pauseBtn.addEventListener("click", this.handlePause.bind(this));
-    // penTool.addEventListener("click", this.changeTool.bind(this));
-    // eraseTool.addEventListener("click", this.changeTool.bind(this));
-    // allEraseTool.addEventListener("click", this.changeTool.bind(this));
-
-    // prevBtn.addEventListener("click", this.handlePrevBtn.bind(this));
-    // nextBtn.addEventListener("click", this.handleNextBtn.bind(this));
-    // deleteBtn.addEventListener("click", this.handleDeleteBtn.bind(this));
-
-    /* mouse event */
-    canvas.addEventListener("mousedown", this.startDrawing.bind(this));
-    canvas.addEventListener("mouseup", this.stopDrawing.bind(this));
-    canvas.addEventListener("mouseout", this.stopDrawing.bind(this)); // 캔버스 밖으로 마우스가 나갔을 때 드로잉 중지
-    canvas.addEventListener("mousemove", this.draw.bind(this));
-
-    // TODO: 선행 이벤트
-    window.addEventListener(
-      "page-update",
-      this.updatePageView.bind(this) as EventListener
+    this.eventList.push(
+      {
+        name: "mousedown",
+        event: this.startDrawing.bind(this) as EventListener,
+      },
+      { name: "mouseup", event: this.stopDrawing.bind(this) as EventListener },
+      { name: "mouseout", event: this.stopDrawing.bind(this) as EventListener },
+      { name: "mousemove", event: this.draw.bind(this) as EventListener },
+      {
+        name: "page-update",
+        event: this.updatePageView.bind(this) as EventListener,
+      },
+      { name: "change", event: this.handleChange.bind(this) as EventListener },
+      { name: "resize", event: this.resizeCanvas.bind(this) as EventListener },
+      {
+        name: "keydown",
+        event: this.handleKeydown.bind(this) as EventListener,
+      },
+      { name: "click", event: this.handleClick.bind(this) as EventListener }
     );
-    window.addEventListener("change", this.handleChange.bind(this));
-    window.addEventListener("resize", this.resizeCanvas.bind(this));
-    window.addEventListener("keydown", this.handleKeydown.bind(this));
-    window.addEventListener("click", this.handleClick.bind(this));
+    for (const { name, event } of this.eventList) {
+      window.addEventListener(name, event);
+    }
+    // /* mouse event */
+    // window.addEventListener("mousedown", this.startDrawing.bind(this));
+    // window.addEventListener("mouseup", this.stopDrawing.bind(this));
+    // window.addEventListener("mouseout", this.stopDrawing.bind(this)); // 캔버스 밖으로 마우스가 나갔을 때 드로잉 중지
+    // window.addEventListener("mousemove", this.draw.bind(this));
+
+    // // TODO: 선행 이벤트
+    // window.addEventListener(
+    //   "page-update",
+    //   this.updatePageView.bind(this) as EventListener
+    // );
+    // window.addEventListener("change", this.handleChange.bind(this));
+    // window.addEventListener("resize", this.resizeCanvas.bind(this));
+    // window.addEventListener("keydown", this.handleKeydown.bind(this));
+    // window.addEventListener("click", this.handleClick.bind(this));
   }
 
   setLineWidth(value: number) {
@@ -119,14 +122,10 @@ export class EventModule {
   }
 
   clearCanvas(ctx: CanvasRenderingContext2D) {
-    this.modules.animator.clearCanvas(ctx);
+    this.modules.animatorModule.clearCanvas(ctx);
   }
 
   private handleChange(e: Event) {
-    // thicknessBar.addEventListener("change", this.updateThickness.bind(this));
-    // repeatDelay.addEventListener("change", this.handleRepeatDelay.bind(this));
-    // fpsBar.addEventListener("change", this.updateFPS.bind(this));
-    // currentPage.addEventListener("change", this.handleCurrentPage.bind(this));
     const target = e.target as HTMLInputElement;
 
     if (target.dataset.tool === "thickness") {
@@ -163,7 +162,7 @@ export class EventModule {
         this.renderCanvas();
       }
       if (closest(target, "tool", "clear")) {
-        this.clearCanvas(ctx);
+        this.clearCanvas(this.modules.animatorModule.ctx);
       }
       if (closest(target, "tool", "delete-page")) {
         this.handleDeleteBtn();
@@ -176,6 +175,9 @@ export class EventModule {
       }
       if (closest(target, "tool", "next-page")) {
         this.handleNextBtn();
+      }
+      if (closest(target, "tool", "undo")) {
+        this.changeTool("undo");
       }
       if (closest(target, "tool", "pen")) {
         this.changeTool("pen");
@@ -202,7 +204,7 @@ export class EventModule {
     const currentPages =
       document.querySelectorAll<HTMLInputElement>('[data-tool="page"]');
     const totalPages = document.querySelectorAll<HTMLInputElement>(
-      '[data-value="total"]'
+      '[data-tool="total"]'
     );
     const { page, total } = e.detail;
     currentPages.forEach((currentPage) => {
@@ -229,14 +231,11 @@ export class EventModule {
     });
   }
 
-  // private handleRepeatDelay() {
-  //   this.repeatDelay = +repeatDelay.value;
-  // }
   private handleRepeatDelay(target: HTMLInputElement) {
     this.repeatDelay = +target.value;
   }
 
-  private toggleRepeatable(target: HTMLElement) {
+  private toggleRepeatable(_target: HTMLElement) {
     const targets = document.querySelectorAll<HTMLButtonElement>(
       '[data-tool="gif-repeat"]'
     );
@@ -255,8 +254,6 @@ export class EventModule {
       }
     });
     if (this.gifRepeatable) {
-      // target.innerText = "repeat";
-      // target.setAttribute("repeat", "");
       repeatDelay.forEach((el) => {
         el.removeAttribute("hidden");
         el.classList.remove("hidden");
@@ -266,8 +263,6 @@ export class EventModule {
         el.classList.remove("hidden");
       });
     } else {
-      // target.innerText = "no repeat";
-      // target.removeAttribute("repeat");
       repeatDelay.forEach((el) => {
         el.setAttribute("hidden", "true");
         el.classList.add("hidden");
@@ -297,8 +292,8 @@ export class EventModule {
     const gif = new GIF({
       workers: 2,
       quality: 10,
-      width: canvas.width,
-      height: canvas.height,
+      width: this.modules.animatorModule.canvas.width,
+      height: this.modules.animatorModule.canvas.height,
       repeat: this.gifRepeatable ? 0 : -1,
     });
     const frames = this.modules.dataModule.currentToon.document.getFrames();
@@ -306,7 +301,17 @@ export class EventModule {
 
     const percentage = document.createElement("div");
     percentage.innerText = "0%";
-    const progress = document.createElement("progress");
+    const progress = document.createElement("div");
+    const progressBar = document.createElement("span");
+    const progressValue = document.createElement("span");
+
+    progress.classList.add("progress");
+    progressBar.classList.add("progress-bar");
+    progressValue.classList.add("progress-value");
+
+    progressBar.append(progressValue);
+    progress.append(progressBar);
+
     percentage.style.cssText = `
       position: fixed;
       top: 50%;
@@ -323,27 +328,28 @@ export class EventModule {
       width: 30vw;
     `;
 
-    progress.max = frames.length;
+    // progress.max = frames.length;
 
     document.body.appendChild(progress);
     document.body.appendChild(percentage);
 
     for (const frame of frames) {
-      const imageFrame = await this.modules.animator.renderFrame(frame, ctx);
+      const imageFrame = await this.modules.animatorModule.renderFrame(
+        frame,
+        this.modules.animatorModule.ctx
+      );
       current += 1;
-      percentage.innerText =
-        "" +
-        parseFloat(
-          (((progress.value = current) / frames.length) * 100).toFixed(2)
-        ) +
-        "%";
+      const value =
+        "" + parseFloat(((current / frames.length) * 100).toFixed(2)) + "%";
+      progressValue.style.width = value;
+      percentage.innerText = value;
       if (this.useRepeatDelay && frames[frames.length - 1] === frame) {
         gif.addFrame(imageFrame, {
           delay: this.repeatDelay,
         });
       } else {
         gif.addFrame(imageFrame, {
-          delay: 1000 / this.modules.animator.fps,
+          delay: 1000 / this.modules.animatorModule.fps,
         });
       }
     }
@@ -355,34 +361,67 @@ export class EventModule {
       a.click();
       URL.revokeObjectURL(downloadUrl);
       a.remove();
-      progress?.remove();
       percentage?.remove();
+      progress?.remove();
       update();
     });
     gif.render();
   }
 
   private async handlePlay() {
+    const playBtns = Array.from(
+      document.querySelectorAll<HTMLButtonElement>('[data-tool="play"]')
+    );
+
     clearTimeout(this.playReady);
 
-    this.modules.animator.clearCanvas(prevCtx);
-    this.modules.animator.clearCanvas(nextCtx);
+    this.modules.animatorModule.clearCanvas(
+      this.modules.animatorModule.prevCtx
+    );
+    this.modules.animatorModule.clearCanvas(
+      this.modules.animatorModule.nextCtx
+    );
 
     console.log("playing...", this.isPlaying);
+
     if (!this.isPlaying) {
       this.isPlaying = true;
-      playBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+
+      playBtns.forEach((playBtn) => {
+        playBtn.setAttribute("play", "");
+        playBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
         <path fill-rule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clip-rule="evenodd" />
-      </svg>`;
-      await this.modules.animator.playSequences(
+        </svg>`;
+      });
+      await this.modules.animatorModule.playSequences(
         this.modules.dataModule.currentToon,
-        ctx
+        this.modules.animatorModule.ctx
       );
       console.log("done!");
 
       this.playReady = window.setTimeout(() => {
-        this.modules.animator.clearPlayQueue();
+        this.modules.animatorModule.clearPlayQueue();
         this.isPlaying = false;
+        playBtns.forEach((playBtn) => {
+          playBtn.removeAttribute("play");
+          playBtn.innerHTML = `<svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-4 h-4">
+            <path
+              fill-rule="evenodd"
+              d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
+              clip-rule="evenodd" />
+          </svg>`;
+        });
+        this.renderCanvas();
+      }, 500);
+    } else {
+      this.modules.animatorModule.clearPlayQueue();
+      this.isPlaying = false;
+      playBtns.forEach((playBtn) => {
+        playBtn.removeAttribute("play");
         playBtn.innerHTML = `<svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -393,54 +432,35 @@ export class EventModule {
             d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
             clip-rule="evenodd" />
         </svg>`;
-        this.renderCanvas();
-      }, 500);
-    } else {
-      this.modules.animator.clearPlayQueue();
-      this.isPlaying = false;
-      playBtn.innerHTML = `<svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        class="w-4 h-4">
-        <path
-          fill-rule="evenodd"
-          d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
-          clip-rule="evenodd" />
-      </svg>`;
+      });
       this.renderCanvas();
     }
   }
 
-  // private handlePause() {
-  //   //
-  // }
-
-  // private updateFPS() {
-  //   this.modules.animator.setFPS(+fpsBar.value);
-  //   this.modules.animator;
-  // }
   private updateFPS(target: HTMLInputElement) {
-    this.modules.animator.setFPS(+target.value);
-    this.modules.animator;
+    this.modules.animatorModule.setFPS(+target.value);
   }
 
   private resizeCanvas() {
-    canvas.width = 640 || window.innerWidth;
-    canvas.height = 320 || window.innerHeight;
+    this.modules.animatorModule.canvas.width =
+      CANVAS_WIDTH || window.innerWidth;
+    this.modules.animatorModule.canvas.height =
+      CANVAS_HEIGHT || window.innerHeight;
 
-    prevCanvas.width = 640 || window.innerWidth;
-    prevCanvas.height = 320 || window.innerHeight;
+    this.modules.animatorModule.prevCanvas.width =
+      CANVAS_WIDTH || window.innerWidth;
+    this.modules.animatorModule.prevCanvas.height =
+      CANVAS_HEIGHT || window.innerHeight;
 
-    nextCanvas.width = 640 || window.innerWidth;
-    nextCanvas.height = 320 || window.innerHeight;
+    this.modules.animatorModule.nextCanvas.width =
+      CANVAS_WIDTH || window.innerWidth;
+    this.modules.animatorModule.nextCanvas.height =
+      CANVAS_HEIGHT || window.innerHeight;
 
     this.renderCanvas();
   }
 
   private changeTool(tool: string) {
-    // const target = e.target as HTMLButtonElement;
-    // const tool = target.dataset.tool;
     if (tool === "pen") {
       this.mode = "pen";
       this.setLineWidth(this.thickness);
@@ -450,35 +470,36 @@ export class EventModule {
     } else if (tool === "all-erase") {
       this.modules.dataModule.currentToon.document.clearPage();
       this.renderCanvas();
+    } else if (tool === "undo") {
+      const page = this.modules.dataModule.currentToon.document.getPage();
+      page.splice(page.length - 1);
+      this.renderCanvas();
     }
+    const thicknessBar = document.querySelector<HTMLInputElement>(
+      '[data-tool="thickness"]'
+    ) as HTMLInputElement;
+    if (!thicknessBar) throw "No thickness Element.";
     thicknessBar.value = "" + this.lineWidth;
   }
 
   private handlePrevBtn() {
-    let value = +currentPage.value - 1;
+    const currentPages =
+      document.querySelectorAll<HTMLInputElement>('[data-tool="page"]');
 
-    if (value < 1) {
-      value = 1;
-    }
+    currentPages.forEach((currentPage) => {
+      let value = +currentPage.value - 1;
+      if (value < 1) value = 1;
+      currentPage.value = "" + value;
+    });
 
-    currentPage.value = "" + value;
-
-    this.clearCanvas(prevCtx);
+    this.clearCanvas(this.modules.animatorModule.prevCtx);
     this.modules.dataModule.currentToon.document.prev();
     this.renderCanvas();
   }
 
-  // private handleCurrentPage() {
-  //   console.log("change");
-  //   this.clearCanvas(ctx);
-  //   this.modules.dataModule.currentToon.document.setCurrentPage(
-  //     (+currentPage.value || 1) - 1
-  //   );
-  //   this.renderCanvas();
-  // }
   private handleCurrentPage(target: HTMLInputElement) {
     console.log("change");
-    this.clearCanvas(ctx);
+    this.clearCanvas(this.modules.animatorModule.ctx);
     this.modules.dataModule.currentToon.document.setCurrentPage(
       (+target.value || 1) - 1
     );
@@ -490,21 +511,12 @@ export class EventModule {
       document.querySelectorAll<HTMLInputElement>('[data-tool="page"]');
     pages.forEach((page) => {
       page.value = "" + (+page.value + 1);
-      this.clearCanvas(nextCtx);
+      this.clearCanvas(this.modules.animatorModule.nextCtx);
       this.modules.dataModule.currentToon.document.next();
       this.renderCanvas();
     });
   }
 
-  // private updateThickness() {
-  //   const thickness = +thicknessBar.value;
-
-  //   if (this.mode === "pen") {
-  //     this.setLineWidth((this.thickness = thickness));
-  //   } else if (this.mode === "erase") {
-  //     this.setLineWidth((this.eraseSize = thickness));
-  //   }
-  // }
   private updateThickness(target: HTMLInputElement) {
     const thickness = +target.value;
 
@@ -516,6 +528,10 @@ export class EventModule {
   }
 
   private startDrawing(e: MouseEvent) {
+    const target = e.target;
+
+    if (target && !(target instanceof HTMLCanvasElement)) return;
+
     const x = e.offsetX;
     const y = e.offsetY;
     const point = { x, y };
@@ -558,17 +574,33 @@ export class EventModule {
       const prevPage = current.document.getPrevPage();
       const nextPage = current.document.getNextPage();
       const page = current.document.getPage();
-      this.modules.animator.clearCanvas(prevCtx);
-      this.modules.animator.clearCanvas(nextCtx);
-      this.modules.animator.clearCanvas(ctx);
+      this.modules.animatorModule.clearCanvas(
+        this.modules.animatorModule.prevCtx
+      );
+      this.modules.animatorModule.clearCanvas(
+        this.modules.animatorModule.nextCtx
+      );
+      this.modules.animatorModule.clearCanvas(this.modules.animatorModule.ctx);
       if (prevPage) {
-        this.modules.animator.renderCanvas(prevPage, "#8188f0", prevCtx);
+        this.modules.animatorModule.renderCanvas(
+          prevPage,
+          "#8188f0",
+          this.modules.animatorModule.prevCtx
+        );
       }
       if (nextPage) {
-        this.modules.animator.renderCanvas(nextPage, "#72b063", nextCtx);
+        this.modules.animatorModule.renderCanvas(
+          nextPage,
+          "#72b063",
+          this.modules.animatorModule.nextCtx
+        );
       }
       if (page) {
-        this.modules.animator.renderCanvas(page, "#000000", ctx);
+        this.modules.animatorModule.renderCanvas(
+          page,
+          "#000000",
+          this.modules.animatorModule.ctx
+        );
       }
     }
   }

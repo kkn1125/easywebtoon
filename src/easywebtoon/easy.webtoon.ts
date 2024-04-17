@@ -1,48 +1,89 @@
-import { resizeCanvas } from "./events/resize.canvas";
-import { canvas } from "./global/variables";
-import { Animator } from "./models/animator";
+import { runQueue } from "./global/variables";
+import { AnimatorModule } from "./modules/animator.module";
 import { DataModule } from "./modules/data.module";
 import { EventModule } from "./modules/event.module";
 import { ToolModule } from "./modules/tool.module";
 
-resizeCanvas(canvas);
-window.addEventListener("resize", resizeCanvas.bind(this, canvas));
-
 export class EasyWebtoon {
   eventModule: EventModule;
   dataModule: DataModule;
-  animator: Animator;
+  animatorModule: AnimatorModule;
   toolModule: ToolModule;
 
   constructor() {
-    const animator = new Animator(20);
+    const animatorModule = new AnimatorModule(20);
     const dataModule = new DataModule();
     const eventModule = new EventModule();
     const toolModule = new ToolModule();
 
-    eventModule.use(animator);
+    eventModule.use(toolModule);
+    eventModule.use(animatorModule);
     eventModule.use(dataModule);
 
     this.toolModule = toolModule;
-    this.animator = animator;
+    this.animatorModule = animatorModule;
     this.dataModule = dataModule;
     this.eventModule = eventModule;
+    // console.log(this.toolModule.useTools)
+  }
 
-    for (const el of toolModule.useTools.pageTools) {
-      document.body.append(el);
-    }
-    for (const el of toolModule.useTools.sequenceTools) {
-      document.body.append(el);
-    }
-    for (const el of toolModule.useTools.exportTool) {
-      document.body.append(el);
-    }
+  setGroupPageTool(target: HTMLElement) {
+    this.toolModule.setGroup("pageTools", target);
+    // this.toolModule.useTools.pageTools.forEach((tool) => {
+    //   target.append(tool);
+    // });
+  }
+
+  setGroupDrawTool(target: HTMLElement) {
+    this.toolModule.setGroup("drawTools", target);
+    // this.toolModule.useTools.drawTools.forEach((tool) => {
+    //   target.append(tool);
+    // });
+  }
+
+  setGroupSequenceTool(target: HTMLElement) {
+    this.toolModule.setGroup("sequenceTools", target);
+    // this.toolModule.useTools.sequenceTools.forEach((tool) => {
+    //   target.append(tool);
+    // });
+  }
+
+  setGroupExportTool(target: HTMLElement) {
+    this.toolModule.setGroup("exportTools", target);
+    // this.toolModule.useTools.exportTool.forEach((tool) => {
+    //   target.append(tool);
+    // });
   }
 
   run() {
+    if (runQueue.length > 0) return;
+
+    this.toolModule.render();
     this.dataModule.initialize();
+    this.eventModule.setupCanvas();
     this.eventModule.initialize();
+
     // this.eventModule.renderCanvas();
     console.log("running...");
+    runQueue.push(1);
+  }
+
+  destroy() {
+    runQueue.splice(0);
+    const wrap = document.getElementById("wrap") as HTMLElement;
+    const pageTool = document.getElementById("page-tool") as HTMLElement;
+    const drawTool = document.getElementById("draw-tool") as HTMLElement;
+    const sequenceTool = document.getElementById(
+      "sequence-tool"
+    ) as HTMLElement;
+    const exportTool = document.getElementById("export-tool") as HTMLElement;
+
+    wrap.innerHTML = "";
+    pageTool.innerHTML = "";
+    drawTool.innerHTML = "";
+    sequenceTool.innerHTML = "";
+    exportTool.innerHTML = "";
+
+    this.eventModule.destroy();
   }
 }

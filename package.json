@@ -2,32 +2,53 @@
   "main": "src/index.ts",
   "name": "anitoon",
   "version": "0.0.1",
-  "repository": {},
+  "repository": {
+    "directory": "github:kkn1125/easywebtoon",
+    "type": "git",
+    "url": "https://github.com/kkn1125/easywebtoon.git"
+  },
   "type": "module",
   "author": {
     "email": "chaplet01@gmail.com",
     "name": "devkimson"
   },
   "scripts": {
-    "sass": "sass --watch --no-source-map ./src/assets/main.scss:./src/assets/scss.css",
-    "tailwind": "tailwindcss -i ./src/assets/scss.css -o ./src/assets/main.css --watch",
-    "app:dev": "cross-env NODE_ENV=development vite",
-    "dev": "concurrently --kill-others-on-fail \"pnpm app:dev\" \"pnpm sass\" \"pnpm tailwind\"",
+    "sass": "sass --watch --no-source-map ./src/assets/main.scss:./src/assets/main.css",
+    "app:dev": "concurrently --kill-others-on-fail \"pnpm sass\" \"pnpm app:dev\"",
+    "dev": "cross-env NODE_ENV=development vite",
     "prod": "cross-env vite preview",
-    "build": "vite build"
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "deploy": "rm -rf dist/ && pnpm build && touch ./dist/.nojekyll && cd dist && git init && git add -A && git commit -m \"gh-pages\" && git push https://github.com/kkn1125/easywebtoon.git -f"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
     "gif.js": "^0.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "uuid": "^9.0.1",
     "vite": "^5.2.8"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
     "@types/uuid": "^9.0.8",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
     "sass": "^1.75.0",
-    "tailwindcss": "^3.4.3"
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
   }
 }

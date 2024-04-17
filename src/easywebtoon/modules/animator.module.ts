@@ -1,13 +1,32 @@
-import { canvas } from "../global/variables";
-import { Toon } from "./toon";
+// import { canvas } from "../global/variables";
+import { Toon } from "../models/toon";
 
-export class Animator {
+export class AnimatorModule {
   playQueue: number[] = [];
   isPlaying: boolean = false;
   fps: number = 20;
 
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
+  prevCanvas: HTMLCanvasElement;
+  prevCtx: CanvasRenderingContext2D;
+  nextCanvas: HTMLCanvasElement;
+  nextCtx: CanvasRenderingContext2D;
+
   constructor(fps: number) {
     this.fps = fps;
+
+    this.canvas = document.createElement("canvas");
+    this.canvas.id = "#app";
+    this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+
+    this.prevCanvas = document.createElement("canvas");
+    this.prevCanvas.id = "#prev-canvas";
+    this.prevCtx = this.prevCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+    this.nextCanvas = document.createElement("canvas");
+    this.nextCanvas.id = "#next-canvas";
+    this.nextCtx = this.nextCanvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
   setFPS(fps: number) {
@@ -15,7 +34,7 @@ export class Animator {
   }
 
   clearCanvas(ctx: CanvasRenderingContext2D) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 초기화
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // 캔버스 초기화
   }
 
   renderCanvas(
@@ -57,7 +76,7 @@ export class Animator {
     const imageFrame = document.createElement("img");
 
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     page.forEach((path) => {
       ctx.lineJoin = "round";
@@ -81,10 +100,10 @@ export class Animator {
       ctx.stroke();
     });
 
-    imageFrame.src = canvas.toDataURL("image/jpg");
+    imageFrame.src = this.canvas.toDataURL("image/jpg");
 
-    imageFrame.width = canvas.width;
-    imageFrame.height = canvas.height;
+    imageFrame.width = this.canvas.width;
+    imageFrame.height = this.canvas.height;
     imageFrame.onload = () => {
       resolver(imageFrame);
     };
