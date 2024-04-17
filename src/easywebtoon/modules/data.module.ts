@@ -15,10 +15,10 @@ export class DataModule {
     author: AUTHOR,
     data: [],
   };
-  currentToon: Toon;
+  currentToon!: Toon;
 
-  constructor() {
-    this.init();
+  initialize() {
+    this.setupData();
 
     if (this.storage.data.length === 0) {
       const toon = new Toon("empty title");
@@ -30,13 +30,13 @@ export class DataModule {
     this.save();
   }
 
-  init() {
+  setupData() {
     if (!this.isExists()) {
       localStorage.setItem(this.STORE_KEY, JSON.stringify(this.storage));
     }
 
     const storage = this.load();
-    this.applyData(storage)
+    this.applyData(storage);
     // this.storage = storage;
   }
 
