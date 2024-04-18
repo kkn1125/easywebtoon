@@ -171,7 +171,12 @@ function App() {
         <Stack
           direction='row'
           gap={1}
-          sx={{ fontWeight: 700, position: "fixed", top: 10, right: 10 }}>
+          sx={{
+            fontWeight: 700,
+            position: "fixed",
+            bottom: 10 + 56,
+            right: 10,
+          }}>
           <Chip
             size='small'
             label={"EasyWebtoon by " + pkg.author.name}
