@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+Sitemap: https://easywebtoon.kro.kr/sitemap.xml
