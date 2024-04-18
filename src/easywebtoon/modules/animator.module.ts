@@ -1,5 +1,5 @@
-// import { canvas } from "../global/variables";
 import { Toon } from "../models/toon";
+import { FastClick } from "fastclick";
 
 export class AnimatorModule {
   playQueue: number[] = [];
@@ -27,6 +27,13 @@ export class AnimatorModule {
     this.nextCanvas = document.createElement("canvas");
     this.nextCanvas.id = "#next-canvas";
     this.nextCtx = this.nextCanvas.getContext("2d") as CanvasRenderingContext2D;
+    this.setupFastClick();
+  }
+
+  setupFastClick() {
+    console.log("apply fastclick...");
+    FastClick.attach(document.body);
+    FastClick.attach(this.canvas);
   }
 
   setFPS(fps: number) {
@@ -40,11 +47,12 @@ export class AnimatorModule {
   renderCanvas(
     page: Page,
     color: string = "#000000",
+    scale: number,
     ctx: CanvasRenderingContext2D
   ) {
     page.forEach((path) => {
       ctx.lineJoin = "round";
-      ctx.lineCap = "butt";
+      ctx.lineCap = "round";
       ctx.strokeStyle = color;
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "source-over";
@@ -56,9 +64,9 @@ export class AnimatorModule {
         }
         ctx.lineWidth = point.thickness;
         if (index === 0) {
-          ctx.moveTo(point.x, point.y);
+          ctx.moveTo(point.x * scale, point.y * scale);
         } else {
-          ctx.lineTo(point.x, point.y);
+          ctx.lineTo(point.x * scale, point.y * scale);
         }
       });
       ctx.stroke();
@@ -116,7 +124,7 @@ export class AnimatorModule {
     this.playQueue.push(1);
     for (const sequence of current.document.pages) {
       this.clearCanvas(ctx);
-      this.renderCanvas(sequence, "#000000", ctx);
+      this.renderCanvas(sequence, "#000000", current.document.scale, ctx);
       await this.sleep(1000 / this.fps);
       if (this.playQueue.length !== 1) {
         console.log("cancel");

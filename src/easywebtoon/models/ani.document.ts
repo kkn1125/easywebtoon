@@ -6,6 +6,7 @@ export class AniDocument {
   description: string = "";
   pages: Page[] = [];
   currentPage: number = 0;
+  scale: number = 1;
 
   constructor();
   constructor(docu: AniDocument);
@@ -35,6 +36,10 @@ export class AniDocument {
     }
 
     this.setCurrentPage(this.currentPage);
+  }
+
+  setScale(scale: number) {
+    this.scale = scale;
   }
 
   clearPage() {

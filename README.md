@@ -14,6 +14,13 @@
 
 - 0.1.1
   - fix
+    - 커스텀 도메인 등록
+    - 모바일 UI 최적화
+    - 펜 또는 터치 그리기 이벤트 추가 및 최적화
+  - add
+    - 펜, 지우개 두께 조정 인풋(number) 추가
+- 0.1.1
+  - fix
     - typescript + tailwindcss => react + mui 로 마이그레이션
     - react나 html,javascript에서도 사용할 수 있도록 객체 모듈화
     - 각 객체 initialize 메서드 별도 호출로 변경

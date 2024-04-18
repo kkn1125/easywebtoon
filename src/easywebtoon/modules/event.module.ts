@@ -3,6 +3,7 @@ import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
   DEFAULT_ERASE_SIZE,
+  DEFAULT_REPEAT_DELAY,
   DEFAULT_THICKNESS,
 } from "../global/env";
 import { AnimatorModule } from "./animator.module";
@@ -32,11 +33,15 @@ export class EventModule {
 
   gifRepeatable: boolean = false;
   useRepeatDelay: boolean = false;
-  repeatDelay: number = 20;
+  repeatDelay: number = DEFAULT_REPEAT_DELAY;
 
   playReady: number = 0;
 
   eventList: { name: string; event: EventListener }[] = [];
+
+  isMobile: [boolean, boolean] = [false, false];
+
+  deadzone: boolean = false;
 
   setupCanvas() {
     const canvas = this.modules.animatorModule.canvas;
@@ -79,6 +84,10 @@ export class EventModule {
   private setupListener() {
     this.eventList.push(
       {
+        name: "touchstart",
+        event: this.startDrawingTouch.bind(this) as EventListener,
+      },
+      {
         name: "mousedown",
         event: this.startDrawing.bind(this) as EventListener,
       },
@@ -86,10 +95,15 @@ export class EventModule {
       { name: "mouseout", event: this.stopDrawing.bind(this) as EventListener },
       { name: "mousemove", event: this.draw.bind(this) as EventListener },
       {
+        name: "touchmove",
+        event: this.drawMobile.bind(this) as EventListener,
+      },
+      // { name: "touchmove", event: this.draw.bind(this) as EventListener },
+      {
         name: "page-update",
         event: this.updatePageView.bind(this) as EventListener,
       },
-      { name: "change", event: this.handleChange.bind(this) as EventListener },
+      { name: "input", event: this.handleChange.bind(this) as EventListener },
       { name: "resize", event: this.resizeCanvas.bind(this) as EventListener },
       {
         name: "keydown",
@@ -100,21 +114,6 @@ export class EventModule {
     for (const { name, event } of this.eventList) {
       window.addEventListener(name, event);
     }
-    // /* mouse event */
-    // window.addEventListener("mousedown", this.startDrawing.bind(this));
-    // window.addEventListener("mouseup", this.stopDrawing.bind(this));
-    // window.addEventListener("mouseout", this.stopDrawing.bind(this)); // 캔버스 밖으로 마우스가 나갔을 때 드로잉 중지
-    // window.addEventListener("mousemove", this.draw.bind(this));
-
-    // // TODO: 선행 이벤트
-    // window.addEventListener(
-    //   "page-update",
-    //   this.updatePageView.bind(this) as EventListener
-    // );
-    // window.addEventListener("change", this.handleChange.bind(this));
-    // window.addEventListener("resize", this.resizeCanvas.bind(this));
-    // window.addEventListener("keydown", this.handleKeydown.bind(this));
-    // window.addEventListener("click", this.handleClick.bind(this));
   }
 
   setLineWidth(value: number) {
@@ -345,7 +344,7 @@ export class EventModule {
       percentage.innerText = value;
       if (this.useRepeatDelay && frames[frames.length - 1] === frame) {
         gif.addFrame(imageFrame, {
-          delay: this.repeatDelay,
+          delay: this.repeatDelay * 1000,
         });
       } else {
         gif.addFrame(imageFrame, {
@@ -518,19 +517,31 @@ export class EventModule {
   }
 
   private updateThickness(target: HTMLInputElement) {
-    const thickness = +target.value;
-
-    if (this.mode === "pen") {
-      this.setLineWidth((this.thickness = thickness));
-    } else if (this.mode === "erase") {
-      this.setLineWidth((this.eraseSize = thickness));
-    }
+    document
+      .querySelectorAll<HTMLInputElement>('[data-tool="thickness"]')
+      .forEach((item) => {
+        const thickness = +target.value;
+        if (this.mode === "pen") {
+          this.setLineWidth((this.thickness = thickness));
+        } else if (this.mode === "erase") {
+          this.setLineWidth((this.eraseSize = thickness));
+        }
+        item.value = "" + thickness;
+      });
   }
 
   private startDrawing(e: MouseEvent) {
+    if (this.isMobile[0]) return;
+
+    // console.log("pc", this.isMobile, e);
+
     const target = e.target;
 
     if (target && !(target instanceof HTMLCanvasElement)) return;
+    if (!this.isMobile[0]) {
+      this.isMobile[1] = true;
+    }
+    e.preventDefault();
 
     const x = e.offsetX;
     const y = e.offsetY;
@@ -542,7 +553,61 @@ export class EventModule {
     this.modules.dataModule.currentToon.document.startLine();
   }
 
-  private stopDrawing() {
+  private startDrawingTouch(e: TouchEvent) {
+    if (this.isMobile[1]) return;
+
+    const target = e.target;
+
+    if (target && !(target instanceof HTMLCanvasElement)) return;
+    e.preventDefault();
+    this.isMobile[0] = true;
+
+    const width =
+      this.modules.animatorModule.canvas.getBoundingClientRect().width;
+
+    const offsetY =
+      this.modules.animatorModule.canvas.getBoundingClientRect().top;
+
+    const scale = CANVAS_WIDTH / width;
+    this.modules.dataModule.currentToon.document.setScale(scale);
+
+    for (const { clientX, clientY } of e.touches) {
+      const x = clientX;
+      const y = clientY - offsetY;
+      const point = { x, y };
+      this.lastPoint = point;
+    }
+
+    this.isDrawing = true;
+    this.lastTime = Date.now();
+    this.modules.dataModule.currentToon.document.startLine();
+
+    this.deadzone = true;
+    let dead = 0;
+    function clear() {
+      clearInterval(dead);
+    }
+
+    // const { clientX, clientY } = e.touches[0];
+    // const thickness = this.lineWidth;
+    // const mode = this.mode;
+    // const x = clientX;
+    // const y = clientY - offsetY;
+    // this.modules.dataModule.currentToon.document
+    //   .getLastLine()
+    //   .push({ mode, x, y, thickness });
+
+    dead = window.setInterval(() => {
+      console.log("dotting...");
+      window.dispatchEvent(new TouchEvent("touchmove"));
+      if (!this.deadzone) {
+        console.log("dotting end");
+        clear();
+      }
+    });
+  }
+
+  private stopDrawing(_e: MouseEvent) {
     this.isDrawing = false;
     this.lastPoint = null;
     // 빈 라인 배열 정리
@@ -552,10 +617,19 @@ export class EventModule {
     if (lastLine.length === 0) {
       this.modules.dataModule.currentToon.document.removeEmptyLine();
     }
+    this.isMobile[0] = false;
+    this.isMobile[1] = false;
   }
 
   draw(e: MouseEvent) {
+    if (this.isMobile[0]) return;
     if (!this.isDrawing) return;
+    e.preventDefault();
+    const width =
+      this.modules.animatorModule.canvas.getBoundingClientRect().width;
+    const scale = CANVAS_WIDTH / width;
+    this.modules.dataModule.currentToon.document.setScale(scale);
+
     const x = e.offsetX;
     const y = e.offsetY;
     const point = { x, y };
@@ -566,6 +640,39 @@ export class EventModule {
       .getLastLine()
       .push({ mode, x, y, thickness });
     this.renderCanvas();
+  }
+
+  drawMobile(e: TouchEvent) {
+    if (this.isMobile[1]) return;
+    if (!this.isDrawing) return;
+
+    e.preventDefault();
+
+    this.deadzone = false;
+
+    const width =
+      this.modules.animatorModule.canvas.getBoundingClientRect().width;
+
+    const offsetY =
+      this.modules.animatorModule.canvas.getBoundingClientRect().top;
+
+    const scale = CANVAS_WIDTH / width;
+    this.modules.dataModule.currentToon.document.setScale(scale);
+
+    for (const { clientX, clientY } of e.touches) {
+      const x = clientX;
+      const y = clientY - offsetY;
+      const point = { x, y };
+
+      this.lastPoint = point;
+      const thickness = this.lineWidth;
+      const mode = this.mode;
+
+      this.modules.dataModule.currentToon.document
+        .getLastLine()
+        .push({ mode, x, y, thickness });
+      this.renderCanvas();
+    }
   }
 
   renderCanvas() {
@@ -585,6 +692,7 @@ export class EventModule {
         this.modules.animatorModule.renderCanvas(
           prevPage,
           "#8188f0",
+          this.modules.dataModule.currentToon.document.scale,
           this.modules.animatorModule.prevCtx
         );
       }
@@ -592,6 +700,7 @@ export class EventModule {
         this.modules.animatorModule.renderCanvas(
           nextPage,
           "#72b063",
+          this.modules.dataModule.currentToon.document.scale,
           this.modules.animatorModule.nextCtx
         );
       }
@@ -599,6 +708,7 @@ export class EventModule {
         this.modules.animatorModule.renderCanvas(
           page,
           "#000000",
+          this.modules.dataModule.currentToon.document.scale,
           this.modules.animatorModule.ctx
         );
       }

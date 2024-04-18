@@ -24,7 +24,7 @@ export default defineConfig(({ command, mode }) => {
       host: HOST,
       port: PORT,
     },
-    base: MODE === "production" ? "/easywebtoon/" : "/",
+    // base: MODE === "production" ? "/easywebtoon/" : "/",
     build: {
       minify: "esbuild",
       cssMinify: true,

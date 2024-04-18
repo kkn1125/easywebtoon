@@ -1,4 +1,4 @@
-import { DEFAULT_THICKNESS } from "../global/env";
+import { DEFAULT_REPEAT_DELAY, DEFAULT_THICKNESS } from "../global/env";
 
 interface CreateElType {
   tagName: "button" | "input" | "span";
@@ -45,7 +45,8 @@ type drawToolNames =
   | "penTool"
   | "eraseTool"
   | "allEraseTool"
-  | "thicknessTool";
+  | "thicknessTool"
+  | "thicknessBarTool";
 type sequenceToolNames =
   | "fpsTool"
   | "pageTool"
@@ -189,6 +190,15 @@ const allEraseTool: CreateElType = {
 const thicknessTool: CreateElType = {
   tagName: "input",
   dataType: "thickness",
+  type: "number",
+  min: "0.1",
+  max: "30",
+  step: "0.1",
+  value: DEFAULT_THICKNESS,
+};
+const thicknessBarTool: CreateElType = {
+  tagName: "input",
+  dataType: "thickness",
   type: "range",
   min: "0.1",
   max: "30",
@@ -273,8 +283,9 @@ const useRepeatDelay: CreateElType = {
 const repeatDelay: CreateElType = {
   tagName: "input",
   dataType: "repeat-delay",
+  type: "number",
   min: "0",
-  value: "20",
+  value: "" + DEFAULT_REPEAT_DELAY,
   hidden: true,
 };
 const exportGif: CreateElType = {
@@ -314,6 +325,7 @@ export class ToolModule {
   };
   drawTools: Record<drawToolNames, CreateElType> = {
     thicknessTool,
+    thicknessBarTool,
     undoTool,
     penTool,
     eraseTool,
@@ -349,8 +361,16 @@ export class ToolModule {
       const el = this.createDataTool(datas.tagName, datas.dataType, []);
 
       if (datas.hidden) {
-        el.hidden = datas.hidden;
-        el.classList.add("hidden");
+        if (el instanceof HTMLDivElement) {
+          const child = el.children[0] as HTMLInputElement;
+          if (child) {
+            child.hidden = datas.hidden;
+            child.classList.add("hidden");
+          }
+        } else {
+          el.hidden = datas.hidden;
+          el.classList.add("hidden");
+        }
       }
 
       if (datas.innerHTML) {
@@ -364,9 +384,34 @@ export class ToolModule {
       if (datas.type) (el.children[0] as HTMLInputElement).type = datas.type;
       if (datas.value)
         (el.children[0] as HTMLInputElement).value = "" + datas.value;
+
       if (datas.step) (el.children[0] as HTMLInputElement).step = datas.step;
+
       if (datas.min) (el.children[0] as HTMLInputElement).min = datas.min;
+
       if (datas.max) (el.children[0] as HTMLInputElement).max = datas.max;
+
+      // if (datas.step) {
+      //   if (datas.type === "range") {
+      //     (el.children[1] as HTMLInputElement).step = datas.step;
+      //   } else {
+      //     (el.children[0] as HTMLInputElement).step = datas.step;
+      //   }
+      // }
+      // if (datas.min) {
+      //   if (datas.type === "range") {
+      //     (el.children[1] as HTMLInputElement).min = datas.min;
+      //   } else {
+      //     (el.children[0] as HTMLInputElement).min = datas.min;
+      //   }
+      // }
+      // if (datas.max) {
+      //   if (datas.type === "range") {
+      //     (el.children[1] as HTMLInputElement).max = datas.max;
+      //   } else {
+      //     (el.children[0] as HTMLInputElement).max = datas.max;
+      //   }
+      // }
 
       return el;
     };
