@@ -77,7 +77,7 @@ export class AnimatorModule {
     this.playQueue = [];
   }
 
-  async renderFrame(page: Page, ctx: CanvasRenderingContext2D) {
+  async renderFrame(page: Page, scale: number, ctx: CanvasRenderingContext2D) {
     let resolver: (value: HTMLImageElement) => void;
     const promise = new Promise((resolve) => (resolver = resolve));
     const color = "#000000";
@@ -100,9 +100,9 @@ export class AnimatorModule {
         }
         ctx.lineWidth = point.thickness;
         if (index === 0) {
-          ctx.moveTo(point.x, point.y);
+          ctx.moveTo(point.x * scale, point.y * scale);
         } else {
-          ctx.lineTo(point.x, point.y);
+          ctx.lineTo(point.x * scale, point.y * scale);
         }
       });
       ctx.stroke();

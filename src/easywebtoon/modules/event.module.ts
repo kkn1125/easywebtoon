@@ -335,6 +335,7 @@ export class EventModule {
     for (const frame of frames) {
       const imageFrame = await this.modules.animatorModule.renderFrame(
         frame,
+        this.modules.dataModule.currentToon.document.scale,
         this.modules.animatorModule.ctx
       );
       current += 1;
