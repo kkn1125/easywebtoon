@@ -51,8 +51,6 @@ export default function AnchorTemporaryDrawer({
       setState({ ...state, [anchor]: open });
     };
 
-  
-
   const list = (anchor: Anchor) => (
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
@@ -85,7 +83,7 @@ export default function AnchorTemporaryDrawer({
           </Button>
         </ListItem>
         <Divider />
-        {toons.map(({ id, title }, index) => (
+        {toons.map(({ id, title }) => (
           <ListItem key={id} disablePadding>
             <ListItemButton>
               {currentToon === id && (

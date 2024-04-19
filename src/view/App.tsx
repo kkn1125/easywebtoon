@@ -1,5 +1,5 @@
 import { Box, Chip, Container, Stack, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import pkg from "../../package.json";
 import { EasyWebtoon } from "../easywebtoon/easy.webtoon";
 import Header from "./components/Header";
