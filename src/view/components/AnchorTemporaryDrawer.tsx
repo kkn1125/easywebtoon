@@ -1,3 +1,4 @@
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import LayersIcon from "@mui/icons-material/Layers";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
@@ -12,10 +13,9 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { KeyboardEvent, MouseEvent, useEffect, useMemo, useState } from "react";
+import { KeyboardEvent, MouseEvent, useEffect, useState } from "react";
 import { EasyWebtoon } from "../../easywebtoon/easy.webtoon";
 import { Toon } from "../../easywebtoon/models/toon";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 
@@ -73,7 +73,7 @@ export default function AnchorTemporaryDrawer({
             className='tool-btn'
             variant='contained'
             startIcon={<AddCircleOutlineIcon />}
-            onClick={(e: MouseEvent) => {
+            onClick={() => {
               easywebtoon?.dataModule.addToon();
               if (easywebtoon) {
                 setToons(() => easywebtoon.dataModule.storage.data);
