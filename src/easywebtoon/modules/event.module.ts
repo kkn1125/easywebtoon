@@ -688,7 +688,7 @@ export class EventModule {
     ) {
       const thickness = this.lineWidth;
       const mode = this.mode;
-      this.modules.dataModule.currentToon.document.getLastLine().push({
+      this.modules.dataModule.currentToon.document.getLastLine()?.push({
         mode,
         x: this.lastPoint?.x || 0,
         y: this.lastPoint?.y || 0,

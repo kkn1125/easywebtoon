@@ -1,9 +1,11 @@
 import { Box, Chip, Container, Stack, Typography } from "@mui/material";
-import { useEffect } from "react";
-import { EasyWebtoon } from "../easywebtoon/easy.webtoon";
+import { useEffect, useRef, useState } from "react";
 import pkg from "../../package.json";
+import { EasyWebtoon } from "../easywebtoon/easy.webtoon";
+import Header from "./components/Header";
 
 function App() {
+  const [easywebtoon, setEasywebtoon] = useState<EasyWebtoon>();
   useEffect(() => {
     function handleFakeMouse(e: MouseEvent) {
       const cursor = document.getElementById("cursor");
@@ -95,7 +97,7 @@ function App() {
 
   useEffect(() => {
     const easywebtoon = new EasyWebtoon();
-
+    setEasywebtoon(easywebtoon);
     const pageTool = document.getElementById("page-tool");
     if (pageTool) easywebtoon.setGroupPageTool(pageTool);
     const drawTool = document.getElementById("draw-tool");
@@ -116,7 +118,10 @@ function App() {
 
   return (
     <Stack sx={{ height: "inherit" }}>
-      <Container maxWidth='md' sx={{ flex: 1 }}>
+      <Box>
+        <Header easywebtoon={easywebtoon} />
+      </Box>
+      <Container id='container' maxWidth='md' sx={{ flex: 1 }}>
         <Box mt={2} />
         <Stack alignItems='space-between' gap={1}>
           <Stack
@@ -191,8 +196,8 @@ function App() {
           <Chip size='small' label={" v " + pkg.version} color='info' />
         </Stack>
       </Container>
-      <Box sx={{ backgroundColor: "#aaa", p: 2 }}>
-        <Typography align='center'>
+      <Box sx={{ backgroundColor: "#555", p: 2 }}>
+        <Typography align='center' color='background.default'>
           Copyright 2024. DEVKIMSON All rights reserved.
         </Typography>
       </Box>

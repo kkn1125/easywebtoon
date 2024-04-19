@@ -1,7 +1,7 @@
 {
   "main": "src/index.ts",
   "name": "easywebtoon",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "homepage": "https://easywebtoon.kro.kr/",
   "repository": {
     "directory": "github:kkn1125/easywebtoon",
@@ -32,6 +32,7 @@
     "gif.js": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
     "uuid": "^9.0.1",
     "vite": "^5.2.8"
   },

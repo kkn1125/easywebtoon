@@ -74,6 +74,10 @@ export class DataModule {
     localStorage.setItem(this.STORE_KEY, JSON.stringify(this.storage));
   }
 
+  addToon() {
+    this.storage.data.push(new Toon("New Toon"));
+  }
+
   copyPage() {
     const page = this.currentToon.document.getPage();
     localStorage.setItem(this.COPY_STORE_KEY, JSON.stringify(page));
