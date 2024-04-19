@@ -124,6 +124,7 @@ export class AniDocument {
     return this.pages;
   }
 
+  /* event */
   requestPageUpdate() {
     window.dispatchEvent(
       new CustomEvent("page-update", {
@@ -133,5 +134,27 @@ export class AniDocument {
         },
       })
     );
+  }
+
+  /* control page */
+  addPageBefore() {
+    this.pages.splice(this.currentPage, 0, []);
+    this.setCurrentPage(this.currentPage + 1);
+  }
+
+  addPageAfter() {
+    this.pages.splice(this.currentPage + 1, 0, []);
+    this.setCurrentPage(this.currentPage);
+  }
+
+  pastePage(jsonPage: Page) {
+    if (this.getPage().length <= 1 && (this.getLastLine() ?? []).length === 0) {
+      // console.log("현재 페이지 덮어쓰기");
+      this.pages[this.currentPage] = jsonPage;
+    } else {
+      // console.log("다음 페이지 만들어서 붙여넣기");
+      this.pages.splice(this.currentPage + 1, 0, jsonPage);
+      this.setCurrentPage(this.currentPage);
+    }
   }
 }

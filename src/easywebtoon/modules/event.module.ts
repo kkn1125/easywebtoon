@@ -9,6 +9,7 @@ import {
 import { AnimatorModule } from "./animator.module";
 import { DataModule } from "./data.module";
 import { ToolModule } from "./tool.module";
+import { DrawTools } from "./tools/draw.tool";
 
 export class EventModule {
   modules!: {
@@ -32,6 +33,7 @@ export class EventModule {
   isPlaying: boolean = false;
 
   gifRepeatable: boolean = false;
+  showBothSideLines: boolean = true;
   useRepeatDelay: boolean = false;
   repeatDelay: number = DEFAULT_REPEAT_DELAY;
 
@@ -92,13 +94,12 @@ export class EventModule {
         event: this.startDrawing.bind(this) as EventListener,
       },
       { name: "mouseup", event: this.stopDrawing.bind(this) as EventListener },
-      { name: "mouseout", event: this.stopDrawing.bind(this) as EventListener },
+      // { name: "mouseout", event: this.stopDrawing.bind(this) as EventListener },
       { name: "mousemove", event: this.draw.bind(this) as EventListener },
       {
         name: "touchmove",
         event: this.drawMobile.bind(this) as EventListener,
       },
-      // { name: "touchmove", event: this.draw.bind(this) as EventListener },
       {
         name: "page-update",
         event: this.updatePageView.bind(this) as EventListener,
@@ -151,7 +152,10 @@ export class EventModule {
     const closest = (el: HTMLElement, dataset: string, value: string) =>
       el.closest(`[data-${dataset}="${value}"]`);
 
+    if (this.isPlaying) return;
+
     if (target) {
+      /* localStorage functions */
       if (closest(target, "tool", "save")) {
         this.modules.dataModule.save();
       }
@@ -160,12 +164,32 @@ export class EventModule {
         this.modules.dataModule.applyData(loadedData);
         this.renderCanvas();
       }
-      if (closest(target, "tool", "clear")) {
-        this.clearCanvas(this.modules.animatorModule.ctx);
+
+      /* page functions */
+      if (closest(target, "tool", "create-page-before")) {
+        this.modules.dataModule.currentToon.document.addPageBefore();
+        this.renderCanvas();
+      }
+      if (closest(target, "tool", "create-page-after")) {
+        this.modules.dataModule.currentToon.document.addPageAfter();
+        this.renderCanvas();
+      }
+      if (closest(target, "tool", "copy-page")) {
+        this.modules.dataModule.copyPage();
+      }
+      if (closest(target, "tool", "clear-copy-page")) {
+        console.log("clear copy");
+        this.modules.dataModule.clearCopyPage();
+      }
+      if (closest(target, "tool", "paste-page")) {
+        this.modules.dataModule.pastePage();
+        this.renderCanvas();
       }
       if (closest(target, "tool", "delete-page")) {
         this.handleDeleteBtn();
       }
+
+      /* sequence tool functions */
       if (closest(target, "tool", "play")) {
         this.handlePlay();
       }
@@ -174,6 +198,11 @@ export class EventModule {
       }
       if (closest(target, "tool", "next-page")) {
         this.handleNextBtn();
+      }
+
+      /* draw tool functions */
+      if (closest(target, "tool", "clear")) {
+        this.clearCanvas(this.modules.animatorModule.ctx);
       }
       if (closest(target, "tool", "undo")) {
         this.changeTool("undo");
@@ -187,8 +216,15 @@ export class EventModule {
       if (closest(target, "tool", "all-erase")) {
         this.changeTool("all-erase");
       }
+
+      /* guide tool functions */
+      if (closest(target, "tool", "both-side-lines")) {
+        this.toggleGuideBothSideLines();
+      }
+
+      /* export functions */
       if (closest(target, "tool", "gif-repeat")) {
-        this.toggleRepeatable(target);
+        this.toggleRepeatable();
       }
       if (closest(target, "tool", "use-repeat-delay")) {
         this.toggleUseRepeatDelay();
@@ -214,6 +250,21 @@ export class EventModule {
     });
   }
 
+  private toggleGuideBothSideLines() {
+    const bothSideLine = document.querySelectorAll<HTMLElement>(
+      `[data-tool="both-side-lines"]`
+    );
+    bothSideLine.forEach((el) => {
+      this.showBothSideLines = !this.showBothSideLines;
+      if (this.showBothSideLines) {
+        el.setAttribute("active", "");
+      } else {
+        el.removeAttribute("active");
+      }
+    });
+    this.renderCanvas();
+  }
+
   private toggleUseRepeatDelay() {
     const useRepeatDelay = document.querySelectorAll<HTMLElement>(
       `[data-tool="use-repeat-delay"]`
@@ -222,10 +273,10 @@ export class EventModule {
     useRepeatDelay.forEach((el) => {
       if (this.useRepeatDelay) {
         el.innerText = "use repeat delay";
-        el.setAttribute("use", "");
+        el.setAttribute("active", "");
       } else {
         el.innerText = "not use repeat delay";
-        el.removeAttribute("use");
+        el.removeAttribute("active");
       }
     });
   }
@@ -234,7 +285,7 @@ export class EventModule {
     this.repeatDelay = +target.value;
   }
 
-  private toggleRepeatable(_target: HTMLElement) {
+  private toggleRepeatable() {
     const targets = document.querySelectorAll<HTMLButtonElement>(
       '[data-tool="gif-repeat"]'
     );
@@ -246,10 +297,10 @@ export class EventModule {
     targets.forEach((target) => {
       if (this.gifRepeatable) {
         target.innerText = "repeat";
-        target.setAttribute("repeat", "");
+        target.setAttribute("active", "");
       } else {
         target.innerText = "no repeat";
-        target.removeAttribute("repeat");
+        target.removeAttribute("active");
       }
     });
     if (this.gifRepeatable) {
@@ -274,11 +325,24 @@ export class EventModule {
   }
 
   private handleKeydown(e: KeyboardEvent) {
+    if (e.ctrlKey && e.key === "c") {
+      e.preventDefault();
+      this.modules.dataModule.copyPage();
+      return;
+    }
+    if (e.ctrlKey && e.key === "v") {
+      e.preventDefault();
+      this.modules.dataModule.pastePage();
+      this.renderCanvas();
+      return;
+    }
     switch (e.key) {
       case "ArrowLeft":
+        e.preventDefault();
         this.handlePrevBtn();
         break;
       case "ArrowRight":
+        e.preventDefault();
         this.handleNextBtn();
         break;
       default:
@@ -388,7 +452,7 @@ export class EventModule {
       this.isPlaying = true;
 
       playBtns.forEach((playBtn) => {
-        playBtn.setAttribute("play", "");
+        playBtn.setAttribute("active", "");
         playBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
         <path fill-rule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clip-rule="evenodd" />
         </svg>`;
@@ -403,7 +467,7 @@ export class EventModule {
         this.modules.animatorModule.clearPlayQueue();
         this.isPlaying = false;
         playBtns.forEach((playBtn) => {
-          playBtn.removeAttribute("play");
+          playBtn.removeAttribute("active");
           playBtn.innerHTML = `<svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -421,7 +485,7 @@ export class EventModule {
       this.modules.animatorModule.clearPlayQueue();
       this.isPlaying = false;
       playBtns.forEach((playBtn) => {
-        playBtn.removeAttribute("play");
+        playBtn.removeAttribute("active");
         playBtn.innerHTML = `<svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -457,14 +521,32 @@ export class EventModule {
     this.modules.animatorModule.nextCanvas.height =
       CANVAS_HEIGHT || window.innerHeight;
 
+    const width =
+      this.modules.animatorModule.canvas.getBoundingClientRect().width;
+    const scale = CANVAS_WIDTH / width;
+    this.modules.dataModule.currentToon.document.setScale(scale);
+
     this.renderCanvas();
   }
 
-  private changeTool(tool: string) {
+  private changeTool(tool: DrawTools["dataType"]) {
+    function clearActivates() {
+      const selectables = document.querySelectorAll(
+        `[data-tool="pen"],[data-tool="erase"]`
+      );
+      selectables.forEach((el) => el.removeAttribute("active"));
+    }
+
     if (tool === "pen") {
+      clearActivates();
+      const pens = document.querySelectorAll('[data-tool="pen"]');
+      pens.forEach((el) => el.setAttribute("active", ""));
       this.mode = "pen";
       this.setLineWidth(this.thickness);
     } else if (tool === "erase") {
+      clearActivates();
+      const erases = document.querySelectorAll('[data-tool="erase"]');
+      erases.forEach((el) => el.setAttribute("active", ""));
       this.mode = "erase";
       this.setLineWidth(this.eraseSize);
     } else if (tool === "all-erase") {
@@ -560,7 +642,7 @@ export class EventModule {
     const target = e.target;
 
     if (target && !(target instanceof HTMLCanvasElement)) return;
-    e.preventDefault();
+    // e.preventDefault();
     this.isMobile[0] = true;
 
     const width =
@@ -572,12 +654,12 @@ export class EventModule {
     const scale = CANVAS_WIDTH / width;
     this.modules.dataModule.currentToon.document.setScale(scale);
 
-    for (const { clientX, clientY } of e.touches) {
-      const x = clientX;
-      const y = clientY - offsetY;
-      const point = { x, y };
-      this.lastPoint = point;
-    }
+    const { clientX, clientY } = e.touches[0];
+
+    const x = clientX;
+    const y = clientY - offsetY;
+    const point = { x, y };
+    this.lastPoint = point;
 
     this.isDrawing = true;
     this.lastTime = Date.now();
@@ -589,26 +671,31 @@ export class EventModule {
       clearInterval(dead);
     }
 
-    // const { clientX, clientY } = e.touches[0];
-    // const thickness = this.lineWidth;
-    // const mode = this.mode;
-    // const x = clientX;
-    // const y = clientY - offsetY;
-    // this.modules.dataModule.currentToon.document
-    //   .getLastLine()
-    //   .push({ mode, x, y, thickness });
-
     dead = window.setInterval(() => {
-      console.log("dotting...");
+      // console.log("dotting...");
       window.dispatchEvent(new TouchEvent("touchmove"));
       if (!this.deadzone) {
-        console.log("dotting end");
+        // console.log("dotting end");
         clear();
       }
     });
   }
 
   private stopDrawing(_e: MouseEvent) {
+    if (
+      (this.modules.dataModule.currentToon.document.getLastLine() ?? [])
+        .length === 0
+    ) {
+      const thickness = this.lineWidth;
+      const mode = this.mode;
+      this.modules.dataModule.currentToon.document.getLastLine().push({
+        mode,
+        x: this.lastPoint?.x || 0,
+        y: this.lastPoint?.y || 0,
+        thickness,
+      });
+    }
+
     this.isDrawing = false;
     this.lastPoint = null;
     // 빈 라인 배열 정리
@@ -620,6 +707,7 @@ export class EventModule {
     }
     this.isMobile[0] = false;
     this.isMobile[1] = false;
+    this.renderCanvas();
   }
 
   draw(e: MouseEvent) {
@@ -647,7 +735,7 @@ export class EventModule {
     if (this.isMobile[1]) return;
     if (!this.isDrawing) return;
 
-    e.preventDefault();
+    // e.preventDefault();
 
     this.deadzone = false;
 
@@ -689,7 +777,7 @@ export class EventModule {
         this.modules.animatorModule.nextCtx
       );
       this.modules.animatorModule.clearCanvas(this.modules.animatorModule.ctx);
-      if (prevPage) {
+      if (this.showBothSideLines && prevPage) {
         this.modules.animatorModule.renderCanvas(
           prevPage,
           "#8188f0",
@@ -697,7 +785,7 @@ export class EventModule {
           this.modules.animatorModule.prevCtx
         );
       }
-      if (nextPage) {
+      if (this.showBothSideLines && nextPage) {
         this.modules.animatorModule.renderCanvas(
           nextPage,
           "#72b063",

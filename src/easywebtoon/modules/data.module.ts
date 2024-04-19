@@ -8,6 +8,7 @@ interface IEasyWebtoonStorage {
 }
 
 export class DataModule {
+  private COPY_STORE_KEY: string = "easywebtoon/copypage";
   private STORE_KEY: string = "easywebtoon";
   storage: IEasyWebtoonStorage = {
     version: VERSION,
@@ -71,5 +72,32 @@ export class DataModule {
 
   save() {
     localStorage.setItem(this.STORE_KEY, JSON.stringify(this.storage));
+  }
+
+  copyPage() {
+    const page = this.currentToon.document.getPage();
+    localStorage.setItem(this.COPY_STORE_KEY, JSON.stringify(page));
+  }
+
+  clearCopyPage() {
+    localStorage.removeItem(this.COPY_STORE_KEY);
+    console.log("delete copy page!");
+  }
+
+  pastePage() {
+    if (!(this.COPY_STORE_KEY in localStorage)) {
+      localStorage.setItem(this.COPY_STORE_KEY, "[]");
+    }
+
+    const copyPage = localStorage.getItem(this.COPY_STORE_KEY) ?? "[]";
+    const jsonPage = JSON.parse(copyPage);
+
+    if (jsonPage.length === 0) {
+      alert("복사된 페이지가 없습니다!");
+      return;
+    }
+
+    console.log("success paste page!");
+    this.currentToon.document.pastePage(jsonPage);
   }
 }

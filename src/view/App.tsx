@@ -100,6 +100,8 @@ function App() {
     if (pageTool) easywebtoon.setGroupPageTool(pageTool);
     const drawTool = document.getElementById("draw-tool");
     if (drawTool) easywebtoon.setGroupDrawTool(drawTool);
+    const guideTool = document.getElementById("guide-tool");
+    if (guideTool) easywebtoon.setGroupGuideTool(guideTool);
     const sequenceTool = document.getElementById("sequence-tool");
     if (sequenceTool) easywebtoon.setGroupSequenceTool(sequenceTool);
     const exportTool = document.getElementById("export-tool");
@@ -120,7 +122,9 @@ function App() {
           <Stack
             id='export-tool'
             direction='row'
+            justifyContent='center'
             alignItems='stretch'
+            flexWrap='wrap'
             gap={1}></Stack>
           <Stack
             id='page-tool'
@@ -148,6 +152,12 @@ function App() {
         </Stack>
         <Box mt={2} />
         <Stack id='tools' gap={1} alignItems='center'>
+          <Stack
+            id='guide-tool'
+            direction='row'
+            gap={1}
+            justifyContent='center'
+            flexWrap='wrap'></Stack>
           <Stack
             id='draw-tool'
             direction='row'
@@ -177,11 +187,6 @@ function App() {
             bottom: 10 + 56,
             right: 10,
           }}>
-          <Chip
-            size='small'
-            label={"EasyWebtoon by " + pkg.author.name}
-            color='info'
-          />
           <Chip size='small' label={" v " + pkg.version} color='info' />
         </Stack>
       </Box>

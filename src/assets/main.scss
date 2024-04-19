@@ -1,0 +1,323 @@
+@charset "UTF-8";
+
+@use "sass:list";
+@use "sass:map";
+
+@mixin radius($radius...) {
+  border-radius: $radius;
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  -o-border-radius: $radius;
+}
+@mixin filter($effect...) {
+  filter: $effect;
+  -webkit-filter: $effect;
+}
+@mixin transform($options...) {
+  transform: $options;
+  -webkit-transform: $options;
+  -moz-transform: $options;
+  -ms-transform: $options;
+  -o-transform: $options;
+}
+@mixin animation($name, $effects...) {
+  animation: $name $effects;
+  -webkit-animation: $name $effects;
+}
+
+@keyframes place-bottom {
+  100% {
+    opacity: 1;
+    @include transform(translate(-50%, 20%));
+  }
+}
+
+@keyframes move-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 300px 0;
+  }
+}
+@-webkit-keyframes move-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 300px 0;
+  }
+}
+@-moz-keyframes move-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 300px 0;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  user-select: none;
+  background: #ccc;
+  overflow: hidden;
+}
+
+#cursor {
+  pointer-events: none;
+  position: fixed;
+  mix-blend-mode: exclusion;
+
+  svg {
+    color: white;
+    display: none;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    transform: translateY(-100%);
+    -webkit-transform: translateY(-100%);
+    -moz-transform: translateY(-100%);
+    -ms-transform: translateY(-100%);
+    -o-transform: translateY(-100%);
+    @include filter(drop-shadow(3px 0px 3px rgb(0 0 0 / 0.4)));
+  }
+  &[drawmode] svg {
+    display: unset;
+  }
+}
+
+.hidden,
+[hidden] {
+  display: none;
+}
+
+canvas {
+  cursor: none;
+}
+
+@media (max-width: 750px) {
+  canvas {
+    width: 100%;
+    height: auto;
+  }
+}
+
+body {
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  input[type="number"],
+  button {
+    outline: none;
+    padding: 0.3rem 0.5rem;
+    @include radius(0.2rem);
+  }
+
+  .progress {
+    width: 300px;
+    height: 20px;
+
+    .progress-bar {
+      display: inline-block;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      @include radius(0.3rem);
+      width: inherit;
+      height: inherit;
+
+      .progress-value {
+        $size: 7.6px;
+        display: inline-block;
+        width: 0%;
+        height: inherit;
+        background: repeating-linear-gradient(
+          -45deg,
+          #04aa6d,
+          #04aa6d $size,
+          #5ac19b $size,
+          #5ac19b #{$size * 2},
+          #04aa6d #{$size * 2},
+          #04aa6d #{$size * 3},
+          #5ac19b #{$size * 3},
+          #5ac19b #{$size * 4},
+          #04aa6d #{$size * 4},
+          #04aa6d #{$size * 5},
+          #5ac19b #{$size * 5},
+          #5ac19b #{$size * 6},
+          #04aa6d #{$size * 6},
+          #04aa6d #{$size * 7},
+          #5ac19b #{$size * 7},
+          #5ac19b #{$size * 8},
+          #04aa6d #{$size * 8},
+          #04aa6d #{$size * 9},
+          #5ac19b #{$size * 9},
+          #5ac19b #{$size * 10}
+        );
+        @include radius(0.3rem);
+        @include animation("move-stripes", 7s linear infinite);
+      }
+    }
+  }
+
+  input[type="number"] {
+    border: 1px solid #ccc;
+    width: 50px;
+  }
+
+  button {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    column-gap: 8px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    /* style */
+    border: none;
+    background-color: #666666;
+    color: #fff;
+    box-shadow: inset 5px 5px 1rem 0px #555, inset -5px -5px 1rem 0px #777,
+      2px 2px 5px 0px #777, -2px -2px 5px 0px #eee;
+  }
+}
+
+@mixin popup-style {
+  pointer-events: none;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #000000;
+  padding: 0.2rem 0.5rem;
+  z-index: 5;
+  @include radius(0.2rem);
+  @include animation("place-bottom", 150ms ease-in-out both);
+  @include transform(translate(-50%, 0%));
+}
+
+[data-tool] {
+  position: relative;
+}
+
+$popup-map: (
+  create-page-before: "앞 페이지 추가",
+  create-page-after: "뒤 페이지 추가",
+  //"페이지 생성",
+  copy-page: "페이지 복사",
+  clear-copy-page: "복사 초기화",
+  // "페이지 복사",
+  paste-page: "페이지 붙여넣기",
+  //"페이지 붙여넣기",
+  delete-page: "페이지 삭제",
+  save: "저장",
+  load: "불러오기",
+  gif-repeat: (
+    repeat: "GIF 반복 사용",
+    norepeat: "GIF 반복 미사용",
+  ),
+  use-repeat-delay: (
+    use: "반복 지연 시간(초) 사용",
+    nouse: "반복 지연 시간(초) 미사용",
+  ),
+  export-gif: "GIF 내보내기",
+  pen: "연필",
+  erase: "지우개",
+  all-erase: "모두 지우기",
+  play: (
+    play: "정지",
+    stop: "재생",
+  ),
+  prev-page: "이전 페이지",
+  next-page: "다음 페이지",
+
+  repeat-delay: "반복 지연 시간(초)",
+  undo: "되돌리기",
+  total: "전체 페이지",
+
+  both-side-lines: "가이드 라인 활성",
+);
+
+div:has(> [data-tool="fps"]) {
+  &::before {
+    content: "FPS:";
+  }
+}
+
+[data-tool][active] {
+  background-color: #2d8661;
+  box-shadow: inset 5px 5px 1rem 0px #166d49, inset -5px -5px 1rem 0px #2ba371,
+    2px 2px 5px 0px #2ba371, -2px -2px 5px 0px #9cd4bd;
+}
+
+@each $dataset, $content in $popup-map {
+  @if type-of($content) == map {
+    @each $inner-key, $inner-value in $content {
+      @if (
+        $inner-key == "norepeat" or $inner-key== "nouse" or $inner-key== "stop"
+      ) {
+        [data-tool="#{$dataset}"] {
+          &:hover::after {
+            @include popup-style;
+            content: $inner-value;
+          }
+        }
+      } @else {
+        [data-tool="#{$dataset}"][#{$inner-key}] {
+          &:hover::after {
+            @include popup-style;
+            content: $inner-value;
+          }
+        }
+      }
+    }
+  } @else {
+    [data-tool="#{$dataset}"] {
+      @if ($dataset == "total") {
+        &::before {
+          content: "/ ";
+        }
+      }
+      &:hover::after {
+        @include popup-style;
+        content: $content;
+      }
+      @if ($dataset == "create-page-before") {
+        svg {
+          @include transform(scaleX(-100%));
+        }
+      }
+    }
+  }
+}
+
+$input-popup: (
+  page: "현재 페이지",
+  thickness: "두께",
+  fps: "초당 프레임",
+);
+
+div:has(> input) {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+div:has(> [data-tool]) {
+  position: relative;
+}
+@each $dataset, $content in $input-popup {
+  div:has(> [data-tool="#{$dataset}"]) {
+    &:hover::after {
+      @include popup-style;
+      content: $content;
+    }
+  }
+}

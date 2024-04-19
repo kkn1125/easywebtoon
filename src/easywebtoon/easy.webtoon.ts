@@ -24,35 +24,26 @@ export class EasyWebtoon {
     this.animatorModule = animatorModule;
     this.dataModule = dataModule;
     this.eventModule = eventModule;
-    // console.log(this.toolModule.useTools)
   }
 
   setGroupPageTool(target: HTMLElement) {
     this.toolModule.setGroup("pageTools", target);
-    // this.toolModule.useTools.pageTools.forEach((tool) => {
-    //   target.append(tool);
-    // });
   }
 
   setGroupDrawTool(target: HTMLElement) {
     this.toolModule.setGroup("drawTools", target);
-    // this.toolModule.useTools.drawTools.forEach((tool) => {
-    //   target.append(tool);
-    // });
+  }
+
+  setGroupGuideTool(target: HTMLElement) {
+    this.toolModule.setGroup("guideTools", target);
   }
 
   setGroupSequenceTool(target: HTMLElement) {
     this.toolModule.setGroup("sequenceTools", target);
-    // this.toolModule.useTools.sequenceTools.forEach((tool) => {
-    //   target.append(tool);
-    // });
   }
 
   setGroupExportTool(target: HTMLElement) {
     this.toolModule.setGroup("exportTools", target);
-    // this.toolModule.useTools.exportTool.forEach((tool) => {
-    //   target.append(tool);
-    // });
   }
 
   run() {
@@ -63,7 +54,6 @@ export class EasyWebtoon {
     this.eventModule.setupCanvas();
     this.eventModule.initialize();
 
-    // this.eventModule.renderCanvas();
     console.log("running...");
     runQueue.push(1);
   }
@@ -73,6 +63,7 @@ export class EasyWebtoon {
     const wrap = document.getElementById("wrap") as HTMLElement;
     const pageTool = document.getElementById("page-tool") as HTMLElement;
     const drawTool = document.getElementById("draw-tool") as HTMLElement;
+    const guideTool = document.getElementById("guide-tool") as HTMLElement;
     const sequenceTool = document.getElementById(
       "sequence-tool"
     ) as HTMLElement;
@@ -81,6 +72,7 @@ export class EasyWebtoon {
     wrap.innerHTML = "";
     pageTool.innerHTML = "";
     drawTool.innerHTML = "";
+    guideTool.innerHTML = "";
     sequenceTool.innerHTML = "";
     exportTool.innerHTML = "";
 

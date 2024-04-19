@@ -1,5 +1,5 @@
 import { Toon } from "../models/toon";
-import { FastClick } from "fastclick";
+// import { FastClick } from "fastclick";
 
 export class AnimatorModule {
   playQueue: number[] = [];
@@ -19,21 +19,25 @@ export class AnimatorModule {
     this.canvas = document.createElement("canvas");
     this.canvas.id = "#app";
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.ctx.imageSmoothingEnabled = true;
 
     this.prevCanvas = document.createElement("canvas");
     this.prevCanvas.id = "#prev-canvas";
     this.prevCtx = this.prevCanvas.getContext("2d") as CanvasRenderingContext2D;
+    this.prevCtx.imageSmoothingEnabled = true;
 
     this.nextCanvas = document.createElement("canvas");
     this.nextCanvas.id = "#next-canvas";
     this.nextCtx = this.nextCanvas.getContext("2d") as CanvasRenderingContext2D;
+    this.nextCtx.imageSmoothingEnabled = true;
+
     this.setupFastClick();
   }
 
   setupFastClick() {
     console.log("apply fastclick...");
-    FastClick.attach(document.body);
-    FastClick.attach(this.canvas);
+    // FastClick.attach(document.body);
+    // FastClick.attach(this.canvas);
   }
 
   setFPS(fps: number) {
@@ -69,6 +73,11 @@ export class AnimatorModule {
           ctx.lineTo(point.x * scale, point.y * scale);
         }
       });
+      if (path.length === 1) {
+        const point = path[0];
+        ctx.lineWidth = point.thickness;
+        ctx.lineTo(point.x * scale, point.y * scale);
+      }
       ctx.stroke();
     });
   }
