@@ -272,10 +272,10 @@ export class EventModule {
     this.useRepeatDelay = !this.useRepeatDelay;
     useRepeatDelay.forEach((el) => {
       if (this.useRepeatDelay) {
-        el.innerText = "use repeat delay";
+        el.innerText = "지연 시간 사용";
         el.setAttribute("active", "");
       } else {
-        el.innerText = "not use repeat delay";
+        el.innerText = "지연 시간 사용";
         el.removeAttribute("active");
       }
     });
@@ -296,10 +296,10 @@ export class EventModule {
     this.gifRepeatable = !this.gifRepeatable;
     targets.forEach((target) => {
       if (this.gifRepeatable) {
-        target.innerText = "repeat";
+        target.innerText = "GIF 재생 반복";
         target.setAttribute("active", "");
       } else {
-        target.innerText = "no repeat";
+        target.innerText = "GIF 재생 반복";
         target.removeAttribute("active");
       }
     });

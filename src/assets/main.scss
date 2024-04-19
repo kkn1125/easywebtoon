@@ -167,7 +167,7 @@ body {
 
   input[type="number"] {
     border: 1px solid #ccc;
-    width: 50px;
+    width: 30px;
   }
 
   button {
@@ -221,25 +221,24 @@ $popup-map: (
   save: "저장",
   load: "불러오기",
   gif-repeat: (
-    repeat: "GIF 반복 사용",
-    norepeat: "GIF 반복 미사용",
+    active: "GIF 재생 반복",
+    norepeat: "GIF 재생 반복",
   ),
   use-repeat-delay: (
-    use: "반복 지연 시간(초) 사용",
-    nouse: "반복 지연 시간(초) 미사용",
+    active: "지연 시간 사용",
+    nouse: "지연 시간 사용",
   ),
   export-gif: "GIF 내보내기",
   pen: "연필",
   erase: "지우개",
   all-erase: "모두 지우기",
   play: (
-    play: "정지",
+    active: "정지",
     stop: "재생",
   ),
   prev-page: "이전 페이지",
   next-page: "다음 페이지",
 
-  repeat-delay: "반복 지연 시간(초)",
   undo: "되돌리기",
   total: "전체 페이지",
 
@@ -303,6 +302,7 @@ $input-popup: (
   page: "현재 페이지",
   thickness: "두께",
   fps: "초당 프레임",
+  repeat-delay: "반복 지연 시간(초)",
 );
 
 div:has(> input) {

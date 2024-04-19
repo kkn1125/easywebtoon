@@ -1,4 +1,4 @@
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Box, Chip, Container, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { EasyWebtoon } from "../easywebtoon/easy.webtoon";
 import pkg from "../../package.json";
@@ -116,19 +116,20 @@ function App() {
 
   return (
     <Stack sx={{ height: "inherit" }}>
-      <Box sx={{ flex: 1 }}>
+      <Container maxWidth='md' sx={{ flex: 1 }}>
         <Box mt={2} />
-        <Stack alignItems='center' gap={1}>
+        <Stack alignItems='space-between' gap={1}>
           <Stack
             id='export-tool'
             direction='row'
-            justifyContent='center'
+            justifyContent='space-between'
             alignItems='stretch'
             flexWrap='wrap'
             gap={1}></Stack>
           <Stack
             id='page-tool'
             direction='row'
+            justifyContent='center'
             alignItems='stretch'
             gap={1}></Stack>
         </Stack>
@@ -151,7 +152,7 @@ function App() {
           />
         </Stack>
         <Box mt={2} />
-        <Stack id='tools' gap={1} alignItems='center'>
+        <Stack id='tools' gap={1} alignItems='space-between'>
           <Stack
             id='guide-tool'
             direction='row'
@@ -189,7 +190,7 @@ function App() {
           }}>
           <Chip size='small' label={" v " + pkg.version} color='info' />
         </Stack>
-      </Box>
+      </Container>
       <Box sx={{ backgroundColor: "#aaa", p: 2 }}>
         <Typography align='center'>
           Copyright 2024. DEVKIMSON All rights reserved.
