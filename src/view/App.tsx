@@ -8,7 +8,7 @@ import AlertPopper from "./components/AlertPopper";
 
 function App() {
   const [easywebtoon, setEasywebtoon] = useState<EasyWebtoon>();
-  const { alerts, addAlert, addDefaultAlert, addInfoAlert } = useAlert();
+  const { addAlert, addInfoAlert } = useAlert();
 
   useEffect(() => {
     function handleFakeMouse(e: MouseEvent) {
@@ -114,15 +114,15 @@ function App() {
     if (exportTool) easywebtoon.setGroupExportTool(exportTool);
 
     easywebtoon.on("app-loaded", () => {
-      addAlert(
-        "warning",
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi ut aut quasi, dignissimos aliquid debitis doloremque eius eaque ullam accusantium dolore hic autem? A aut, velit error aspernatur placeat, accusamus assumenda quod animi quasi sed autem! Nobis deserunt possimus excepturi quaerat quis illo laboriosam, quam itaque asperiores provident! Saepe, incidunt illum suscipit."
-      );
+      addAlert("text", "app loaded!");
     });
 
     easywebtoon.run();
 
     /* easywebtoon event listeners */
+    easywebtoon.on("create-toon", () => {
+      addInfoAlert("success create new toon!");
+    });
     easywebtoon.on("save", () => {
       addInfoAlert("success save current data!");
     });
@@ -136,7 +136,7 @@ function App() {
     return () => {
       easywebtoon.destroy();
     };
-  }, []);
+  }, [addAlert, addInfoAlert]);
 
   return (
     <Stack sx={{ height: "inherit" }}>

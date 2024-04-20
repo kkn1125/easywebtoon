@@ -105,6 +105,9 @@ export class DataModule {
     const toon = new Toon("New Toon");
     this.storage.data.push(toon);
     this.saveWithoutCurrentToon(toon);
+    this.parent.eventListeners["create-toon"]?.forEach((cb) => {
+      cb();
+    });
   }
 
   copyPage() {

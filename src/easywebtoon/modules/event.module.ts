@@ -24,13 +24,15 @@ type EventModuleType = {
 };
 
 type CustomEventType = {
-  type: (
-    | PageTools
-    | DrawTools
-    | GuideTools
-    | SequenceTools
-    | ExportTools
-  )["dataType"];
+  type:
+    | (
+        | PageTools
+        | DrawTools
+        | GuideTools
+        | SequenceTools
+        | ExportTools
+      )["dataType"]
+    | OnEventNames;
   data: object;
 };
 
@@ -103,7 +105,7 @@ export class EventModule extends IModule<EventModuleType> {
   private setupListener() {
     this.eventList.push(
       {
-        name: "easywebtoon-command",
+        name: this.parent.EMMIT_TYPE,
         event: this.handleCommandEasyWebtoon.bind(this) as EventListener,
       },
       {
@@ -160,6 +162,18 @@ export class EventModule extends IModule<EventModuleType> {
         }
         case "erase": {
           this.changeTool("erase");
+          break;
+        }
+        case "create-toon": {
+          this.modules.dataModule.addToon();
+          break;
+        }
+        case "select-toon": {
+          const toon = this.modules.dataModule.findToonById(e.detail.data.id);
+          if (toon) {
+            this.modules.dataModule.setCurrent(toon);
+            this.renderCanvas();
+          }
           break;
         }
         default: {

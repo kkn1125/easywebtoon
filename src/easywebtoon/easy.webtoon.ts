@@ -12,7 +12,7 @@ import type { PageTools } from "./modules/tools/page.tool";
 import type { SequenceTools } from "./modules/tools/sequence.tool";
 
 export class EasyWebtoon {
-  // private EMMIT_TYPE: string = "easywebtoon-command";
+  EMMIT_TYPE: string = "easywebtoon-command";
 
   eventModule: EventModule;
   dataModule: DataModule;
@@ -23,25 +23,27 @@ export class EasyWebtoon {
   eventListeners: PartialTools = {};
 
   /* 이후 명령으로 조정할 수 있도록 사용 예정 */
-  // emmit(
-  //   commandType: (
-  //     | DrawTools
-  //     | ExportTools
-  //     | GuideTools
-  //     | PageTools
-  //     | SequenceTools
-  //   )["dataType"],
-  //   data: any
-  // ) {
-  //   window.dispatchEvent(
-  //     new CustomEvent(this.EMMIT_TYPE, {
-  //       detail: {
-  //         type: commandType,
-  //         data,
-  //       },
-  //     })
-  //   );
-  // }
+  emmit(
+    commandType:
+      | (
+          | DrawTools
+          | ExportTools
+          | GuideTools
+          | PageTools
+          | SequenceTools
+        )["dataType"]
+      | OnEventNames,
+    data: any
+  ) {
+    window.dispatchEvent(
+      new CustomEvent(this.EMMIT_TYPE, {
+        detail: {
+          type: commandType,
+          data,
+        },
+      })
+    );
+  }
 
   constructor() {
     const animatorModule = new AnimatorModule(this, 20);

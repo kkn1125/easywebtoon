@@ -28,4 +28,6 @@ declare type OnEventNames =
   | `${"before" | "after"}-destroy`
   | "app-loaded"
   | "load"
-  | "animator-initialized";
+  | "animator-initialized"
+  | "create-toon"
+  | "select-toon";

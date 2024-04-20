@@ -26,33 +26,33 @@ function useAlert() {
   );
 
   const addDefaultAlert = useCallback(
-    (message: string, autoClose: boolean = true, closeTime: number = 3) =>
+    (message: string, autoClose?: boolean, closeTime?: number) =>
       addAlert("text", message, autoClose, closeTime),
     [addAlert]
   );
 
   const addSuccessAlert = useCallback(
-    (message: string, autoClose: boolean = true, closeTime: number = 3) =>
+    (message: string, autoClose?: boolean, closeTime?: number) =>
       addAlert("success", message, autoClose, closeTime),
     [addAlert]
   );
   const addPrimaryAlert = useCallback(
-    (message: string, autoClose: boolean = true, closeTime: number = 3) =>
+    (message: string, autoClose?: boolean, closeTime?: number) =>
       addAlert("primary", message, autoClose, closeTime),
     [addAlert]
   );
   const addInfoAlert = useCallback(
-    (message: string, autoClose: boolean = true, closeTime: number = 3) =>
+    (message: string, autoClose?: boolean, closeTime?: number) =>
       addAlert("info", message, autoClose, closeTime),
     [addAlert]
   );
   const addWarningAlert = useCallback(
-    (message: string, autoClose: boolean = true, closeTime: number = 3) =>
+    (message: string, autoClose?: boolean, closeTime?: number) =>
       addAlert("warning", message, autoClose, closeTime),
     [addAlert]
   );
   const addErrorAlert = useCallback(
-    (message: string, autoClose: boolean = true, closeTime: number = 3) =>
+    (message: string, autoClose?: boolean, closeTime?: number) =>
       addAlert("error", message, autoClose, closeTime),
     [addAlert]
   );
