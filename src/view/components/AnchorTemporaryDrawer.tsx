@@ -1,5 +1,4 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import LayersIcon from "@mui/icons-material/Layers";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Box,
@@ -9,37 +8,28 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
 } from "@mui/material";
-import { KeyboardEvent, MouseEvent, useEffect, useState } from "react";
-import { EasyWebtoon } from "../../easywebtoon/easy.webtoon";
-import { Toon } from "../../easywebtoon/models/toon";
+import {
+  KeyboardEvent,
+  MouseEvent,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+import { EasyWebtoonContext } from "../contexts/EasyWebtoonProvider";
+import ToonItem from "./ToonItem";
 
-export default function AnchorTemporaryDrawer({
-  easywebtoon,
-}: {
-  easywebtoon?: EasyWebtoon;
-}) {
+export default function AnchorTemporaryDrawer() {
+  const { easywebtoon } = useContext(EasyWebtoonContext);
   const [state, setState] = useState(false);
 
-  const [toons, setToons] = useState<Toon[]>([]);
-  const [currentToon, setCurrentToon] = useState<string>();
-
-  useEffect(() => {
-    if (easywebtoon) {
-      setToons([...easywebtoon.dataModule.storage.data]);
-      setCurrentToon(easywebtoon.dataModule.currentToon.id);
-    }
-  }, [easywebtoon]);
-
-  function handleSelectToon(id: string) {
-    easywebtoon?.emmit("select-toon", { id });
-  }
+  const toons = useMemo(() => {
+    return easywebtoon.dataModule.storage.data;
+  }, [easywebtoon.dataModule.storage.data]);
 
   const toggleDrawer =
     (open: boolean) => (event: KeyboardEvent | MouseEvent) => {
+      console.log(event.type)
       if (
         event.type === "keydown" &&
         ((event as KeyboardEvent).key === "Tab" ||
@@ -64,7 +54,7 @@ export default function AnchorTemporaryDrawer({
       </IconButton>
       <Drawer anchor={"left"} open={state} onClose={toggleDrawer(false)}>
         <Box
-          sx={{ width: 250 }}
+          sx={{ width: 300 }}
           role='presentation'
           onClick={(e: MouseEvent) => {
             const target = e.target as HTMLButtonElement;
@@ -82,29 +72,14 @@ export default function AnchorTemporaryDrawer({
                 variant='contained'
                 startIcon={<AddCircleOutlineIcon />}
                 onClick={() => {
-                  easywebtoon?.dataModule.addToon();
-                  if (easywebtoon) {
-                    setToons(() => [...easywebtoon.dataModule.storage.data]);
-                  }
+                  easywebtoon.dataModule.addToon();
                 }}>
                 추가
               </Button>
             </ListItem>
             <Divider />
-            {toons.map(({ id, title }) => (
-              <ListItem
-                key={id}
-                disablePadding
-                onClick={() => handleSelectToon(id)}>
-                <ListItemButton>
-                  {currentToon === id && (
-                    <ListItemIcon>
-                      <LayersIcon />
-                    </ListItemIcon>
-                  )}
-                  <ListItemText primary={title} />
-                </ListItemButton>
-              </ListItem>
+            {toons.map((toon) => (
+              <ToonItem key={toon.id} toon={toon} />
             ))}
           </List>
         </Box>

@@ -10,14 +10,20 @@ function useAlert() {
     (
       color: "primary" | "success" | "info" | "error" | "warning" | "text",
       message: string,
-      autoClose: boolean = true,
-      closeTime: number = 5
+      autoClose?: boolean,
+      closeTime?: number
     ) => {
       return new Promise((resolve) => {
         const id = v4();
         alertDispatch({
           type: "alert/add",
-          alert: { id, message, autoClose, closeTime, color },
+          alert: {
+            id,
+            message,
+            autoClose: autoClose ?? true,
+            closeTime: closeTime ?? 5,
+            color,
+          },
           cb: resolve,
         } as Omit<AlertActionType, "id">);
       });

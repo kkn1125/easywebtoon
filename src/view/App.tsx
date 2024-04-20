@@ -1,14 +1,15 @@
 import { Box, Chip, Container, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import pkg from "../../package.json";
-import { EasyWebtoon } from "../easywebtoon/easy.webtoon";
-import Header from "./components/Header";
-import useAlert from "./hooks/useAlert";
 import AlertPopper from "./components/AlertPopper";
+import Header from "./components/Header";
+import { EasyWebtoonContext } from "./contexts/EasyWebtoonProvider";
+import useAlert from "./hooks/useAlert";
 
 function App() {
-  const [easywebtoon, setEasywebtoon] = useState<EasyWebtoon>();
-  const { addAlert, addInfoAlert } = useAlert();
+  const { easywebtoon } = useContext(EasyWebtoonContext);
+  // const [easywebtoon, setEasywebtoon] = useState<EasyWebtoon>();
+  const { addAlert, addInfoAlert, addErrorAlert } = useAlert();
 
   useEffect(() => {
     function handleFakeMouse(e: MouseEvent) {
@@ -100,8 +101,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const easywebtoon = new EasyWebtoon();
-    setEasywebtoon(easywebtoon);
     const pageTool = document.getElementById("page-tool");
     if (pageTool) easywebtoon.setGroupPageTool(pageTool);
     const drawTool = document.getElementById("draw-tool");
@@ -132,20 +131,29 @@ function App() {
     easywebtoon.on("export-gif", () => {
       addInfoAlert("succss export data to gif!");
     });
+    easywebtoon.on("change-toon-title", () => {
+      addInfoAlert("툰 이름을 변경했습니다.");
+    });
+    easywebtoon.on("remove-toon", () => {
+      addErrorAlert("선택한 툰을 제거했습니다.");
+    });
 
     return () => {
       easywebtoon.destroy();
     };
-  }, [addAlert, addInfoAlert]);
+  }, [addAlert, addErrorAlert, addInfoAlert, easywebtoon]);
 
   return (
     <Stack sx={{ height: "inherit" }}>
-      <Box>
-        <Header easywebtoon={easywebtoon} />
-      </Box>
-      <Container id='container' maxWidth='md' sx={{ flex: 1 }}>
+      <Container
+        id='container'
+        maxWidth='md'
+        sx={{ flex: 1, p: "0 !important", backgroundColor: "#ccc" }}>
+        <Box>
+          <Header />
+        </Box>
         <Box mt={2} />
-        <Stack alignItems='space-between' gap={1}>
+        <Stack alignItems='space-between' gap={1} sx={{ px: 2 }}>
           <Stack
             id='export-tool'
             direction='row'
@@ -162,6 +170,7 @@ function App() {
         </Stack>
 
         <Box mb={2} />
+
         <Stack direction='row'>
           <Box
             id='wrap'
@@ -178,8 +187,10 @@ function App() {
             }}
           />
         </Stack>
+
         <Box mt={2} />
-        <Stack id='tools' gap={1} alignItems='space-between'>
+
+        <Stack id='tools' gap={1} alignItems='space-between' sx={{ px: 2 }}>
           <Stack
             id='guide-tool'
             direction='row'
@@ -218,12 +229,14 @@ function App() {
           <Chip size='small' label={" v " + pkg.version} color='info' />
         </Stack>
       </Container>
-      <AlertPopper />
-      <Box sx={{ backgroundColor: "#555", p: 2 }}>
-        <Typography align='center' color='background.default'>
-          Copyright 2024. DEVKIMSON All rights reserved.
-        </Typography>
-      </Box>
+      <Container maxWidth='md' sx={{ p: "0 !important" }}>
+        <AlertPopper />
+        <Box sx={{ backgroundColor: "#555", p: 2 }}>
+          <Typography align='center' color='background.default'>
+            Copyright 2024. DEVKIMSON All rights reserved.
+          </Typography>
+        </Box>
+      </Container>
     </Stack>
   );
 }

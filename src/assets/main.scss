@@ -64,7 +64,7 @@ body,
   height: 100%;
   margin: 0;
   user-select: none;
-  background: #ccc;
+  background: #000;
   overflow: hidden;
 }
 
@@ -91,10 +91,7 @@ body,
   }
 }
 
-.hidden,
-[hidden] {
-  display: none;
-}
+
 
 canvas {
   cursor: none;
@@ -119,7 +116,10 @@ body {
       padding: 0.3rem 0.5rem;
       @include radius(0.2rem);
     }
-
+    .hidden,
+    [hidden] {
+      display: none;
+    }
     .progress {
       width: 300px;
       height: 20px;

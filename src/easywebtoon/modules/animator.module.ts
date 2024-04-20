@@ -37,18 +37,10 @@ export class AnimatorModule {
     this.nextCtx = this.nextCanvas.getContext("2d") as CanvasRenderingContext2D;
     this.nextCtx.imageSmoothingEnabled = true;
 
-    // this.setupFastClick();
-
     this.parent.eventListeners["animator-initialized"]?.forEach((cb) => {
       cb();
     });
   }
-
-  // setupFastClick() {
-  //   console.log("apply fastclick...");
-  //   // FastClick.attach(document.body);
-  //   // FastClick.attach(this.canvas);
-  // }
 
   setFPS(fps: number) {
     this.fps = fps;

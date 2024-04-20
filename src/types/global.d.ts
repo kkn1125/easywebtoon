@@ -23,6 +23,10 @@ declare type AlertActionType = {
   id?: string;
   cb: (alert: Alert, alerts: Alert[]) => void;
 };
+declare type EasyWebtoonActionType = {
+  type: EasyWebtoonAction;
+  easywebtoon?: EasyWebtoon;
+};
 
 declare type OnEventNames =
   | `${"before" | "after"}-destroy`
@@ -31,4 +35,7 @@ declare type OnEventNames =
   | "animator-initialized"
   | "create-toon"
   | "select-toon"
-  | "tool-initialized";
+  | "remove-toon"
+  | "change-toon-title"
+  | "tool-initialized"
+  | "setCurrentToon";

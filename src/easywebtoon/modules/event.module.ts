@@ -87,7 +87,9 @@ export class EventModule extends IModule<EventModuleType> {
     const thicknessBar = document.querySelector<HTMLInputElement>(
       '[data-tool="thickness"]'
     ) as HTMLInputElement;
+
     if (!thicknessBar) throw "No thickness Element.";
+
     this.setupListener();
     this.setLineWidth(+(thicknessBar.value = "" + this.thickness));
     this.resizeCanvas();
@@ -119,7 +121,7 @@ export class EventModule extends IModule<EventModuleType> {
         event: this.startDrawing.bind(this) as EventListener,
       },
       { name: "mouseup", event: this.stopDrawing.bind(this) as EventListener },
-      // { name: "mouseout", event: this.stopDrawing.bind(this) as EventListener },
+      { name: "mouseout", event: this.stopDrawing.bind(this) as EventListener },
       { name: "mousemove", event: this.draw.bind(this) as EventListener },
       {
         name: "touchmove",
@@ -176,6 +178,18 @@ export class EventModule extends IModule<EventModuleType> {
             this.modules.dataModule.setCurrent(toon);
             this.renderCanvas();
           }
+          break;
+        }
+        case "remove-toon": {
+          const { id } = e.detail.data;
+          this.modules.dataModule.removeToon(id);
+          this.renderCanvas();
+          break;
+        }
+        case "change-toon-title": {
+          const { id, title } = e.detail.data;
+          this.modules.dataModule.renameToonTitle(id, title);
+          this.renderCanvas();
           break;
         }
         default: {
@@ -645,7 +659,6 @@ export class EventModule extends IModule<EventModuleType> {
   }
 
   private handleCurrentPage(target: HTMLInputElement) {
-    console.log("change");
     this.clearCanvas(this.modules.animatorModule.ctx);
     this.modules.dataModule.currentToon.document.setCurrentPage(
       (+target.value || 1) - 1
@@ -681,8 +694,6 @@ export class EventModule extends IModule<EventModuleType> {
   private startDrawing(e: MouseEvent) {
     if (this.isMobile[0]) return;
 
-    // console.log("pc", this.isMobile, e);
-
     const target = e.target;
 
     if (target && !(target instanceof HTMLCanvasElement)) return;
@@ -703,11 +714,9 @@ export class EventModule extends IModule<EventModuleType> {
 
   private startDrawingTouch(e: TouchEvent) {
     if (this.isMobile[1]) return;
-
     const target = e.target;
 
     if (target && !(target instanceof HTMLCanvasElement)) return;
-    // e.preventDefault();
     this.isMobile[0] = true;
 
     const width =
@@ -737,10 +746,8 @@ export class EventModule extends IModule<EventModuleType> {
     }
 
     dead = window.setInterval(() => {
-      // console.log("dotting...");
       window.dispatchEvent(new TouchEvent("touchmove"));
       if (!this.deadzone) {
-        // console.log("dotting end");
         clear();
       }
     });
@@ -778,7 +785,9 @@ export class EventModule extends IModule<EventModuleType> {
   draw(e: MouseEvent) {
     if (this.isMobile[0]) return;
     if (!this.isDrawing) return;
+
     e.preventDefault();
+
     const width =
       this.modules.animatorModule.canvas.getBoundingClientRect().width;
     const scale = CANVAS_WIDTH / width;
@@ -799,8 +808,6 @@ export class EventModule extends IModule<EventModuleType> {
   drawMobile(e: TouchEvent) {
     if (this.isMobile[1]) return;
     if (!this.isDrawing) return;
-
-    // e.preventDefault();
 
     this.deadzone = false;
 

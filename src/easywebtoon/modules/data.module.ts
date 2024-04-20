@@ -12,6 +12,7 @@ export class DataModule {
   private parent: EasyWebtoon;
 
   private COPY_STORE_KEY: string = "easywebtoon/copypage";
+  private STORE_CURRENT_KEY: string = "easywebtoon/current";
   private STORE_KEY: string = "easywebtoon";
   storage: IEasyWebtoonStorage = {
     version: VERSION,
@@ -32,7 +33,12 @@ export class DataModule {
       this.storage.data.push(toon);
     }
 
-    this.currentToon = this.storage.data[0];
+    const currentToonId = this.loadCurrentToonId();
+    const currentToonIndex = this.storage.data.findIndex(
+      (toon) => toon.id === currentToonId
+    );
+    this.currentToon =
+      this.storage.data[currentToonIndex > -1 ? currentToonIndex : 0];
 
     this.save(true);
   }
@@ -44,7 +50,6 @@ export class DataModule {
 
     const storage = this.load(true);
     this.applyData(storage);
-    // this.storage = storage;
   }
 
   findToonById(id: string) {
@@ -53,10 +58,44 @@ export class DataModule {
 
   setCurrent(currentToon: Toon) {
     this.currentToon = currentToon;
+    localStorage.setItem(this.STORE_CURRENT_KEY, currentToon.id);
+    this.parent.eventListeners["setCurrentToon"]?.forEach((cb) => {
+      cb();
+    });
+  }
+
+  removeToon(id: string) {
+    if (this.storage.data.length <= 1) return;
+    const index = this.storage.data.findIndex((toon) => toon.id === id);
+    if (index > -1) {
+      this.storage.data.splice(index, 1);
+      this.save(true);
+      this.parent.eventListeners["remove-toon"]?.forEach((cb) => {
+        cb();
+      });
+    }
+  }
+
+  renameToonTitle(id: string, title: string) {
+    const toon = this.findToonById(id);
+    if (toon) {
+      toon.title = title;
+      this.save(true);
+      this.parent.eventListeners["change-toon-title"]?.forEach((cb) => {
+        cb();
+      });
+    }
   }
 
   isExists() {
     return this.STORE_KEY in localStorage;
+  }
+
+  loadCurrentToonId() {
+    const currentToonId = localStorage.getItem(
+      this.STORE_CURRENT_KEY
+    ) as string;
+    return currentToonId;
   }
 
   load(isAuto: boolean = false): IEasyWebtoonStorage {
