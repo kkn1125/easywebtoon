@@ -33,7 +33,9 @@ type CustomEventType = {
         | ExportTools
       )["dataType"]
     | OnEventNames;
-  data: object;
+  data: {
+    [k: string]: any;
+  };
 };
 
 export class EventModule extends IModule<EventModuleType> {

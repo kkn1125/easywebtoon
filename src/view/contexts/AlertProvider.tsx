@@ -9,9 +9,7 @@ const AlertAction = {
 type AlertAction = (typeof AlertAction)[keyof typeof AlertAction];
 
 export const AlertContext = createContext(initailValue);
-export const AlertDispatchContext = createContext(
-  (action: AlertActionType) => {}
-);
+export const AlertDispatchContext = createContext((_: AlertActionType) => {});
 
 const reducer = (state: Alert[], action: AlertActionType) => {
   switch (action.type) {
