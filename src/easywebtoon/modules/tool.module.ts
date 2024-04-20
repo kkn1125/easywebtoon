@@ -97,6 +97,10 @@ export class ToolModule {
     this.useTools.exportTools.push(
       ...Object.values(this.exportTools).map(convertEls)
     );
+
+    this.parent.eventListeners["tool-initialized"]?.forEach((cb) => {
+      cb();
+    });
   }
 
   setGroup(name: keyof ToolModule["group"], group: HTMLElement) {

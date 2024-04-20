@@ -30,4 +30,5 @@ declare type OnEventNames =
   | "load"
   | "animator-initialized"
   | "create-toon"
-  | "select-toon";
+  | "select-toon"
+  | "tool-initialized";
