@@ -3,9 +3,13 @@ import { useEffect, useState } from "react";
 import pkg from "../../package.json";
 import { EasyWebtoon } from "../easywebtoon/easy.webtoon";
 import Header from "./components/Header";
+import useAlert from "./hooks/useAlert";
+import AlertPopper from "./components/AlertPopper";
 
 function App() {
   const [easywebtoon, setEasywebtoon] = useState<EasyWebtoon>();
+  const { alerts, addAlert, addDefaultAlert, addInfoAlert } = useAlert();
+
   useEffect(() => {
     function handleFakeMouse(e: MouseEvent) {
       const cursor = document.getElementById("cursor");
@@ -109,7 +113,25 @@ function App() {
     const exportTool = document.getElementById("export-tool");
     if (exportTool) easywebtoon.setGroupExportTool(exportTool);
 
+    easywebtoon.on("app-loaded", () => {
+      addAlert(
+        "warning",
+        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi ut aut quasi, dignissimos aliquid debitis doloremque eius eaque ullam accusantium dolore hic autem? A aut, velit error aspernatur placeat, accusamus assumenda quod animi quasi sed autem! Nobis deserunt possimus excepturi quaerat quis illo laboriosam, quam itaque asperiores provident! Saepe, incidunt illum suscipit."
+      );
+    });
+
     easywebtoon.run();
+
+    /* easywebtoon event listeners */
+    easywebtoon.on("save", () => {
+      addInfoAlert("success save current data!");
+    });
+    easywebtoon.on("load", () => {
+      addInfoAlert("succss loaded data!");
+    });
+    easywebtoon.on("export-gif", () => {
+      addInfoAlert("succss export data to gif!");
+    });
 
     return () => {
       easywebtoon.destroy();
@@ -196,6 +218,7 @@ function App() {
           <Chip size='small' label={" v " + pkg.version} color='info' />
         </Stack>
       </Container>
+      <AlertPopper />
       <Box sx={{ backgroundColor: "#555", p: 2 }}>
         <Typography align='center' color='background.default'>
           Copyright 2024. DEVKIMSON All rights reserved.

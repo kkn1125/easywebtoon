@@ -1,3 +1,4 @@
+import { EasyWebtoon } from "../easy.webtoon";
 import { UseTools } from "./tools";
 import { DrawTools } from "./tools/draw.tool";
 import { ExportTools } from "./tools/export.tool";
@@ -6,6 +7,8 @@ import { PageTools } from "./tools/page.tool";
 import { SequenceTools } from "./tools/sequence.tool";
 
 export class ToolModule {
+  private parent: EasyWebtoon;
+
   group: {
     pageTools: HTMLElement | null;
     drawTools: HTMLElement | null;
@@ -28,7 +31,9 @@ export class ToolModule {
 
   useTools = JSON.parse(JSON.stringify(UseTools)) as typeof UseTools;
 
-  constructor() {
+  constructor(parent: EasyWebtoon) {
+    this.parent = parent;
+
     const convertEls = (
       datas: PageTools | DrawTools | GuideTools | SequenceTools | ExportTools
     ) => {

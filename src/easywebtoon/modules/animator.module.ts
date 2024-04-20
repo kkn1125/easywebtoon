@@ -1,21 +1,27 @@
+import { EasyWebtoon } from "../easy.webtoon";
 import { Toon } from "../models/toon";
 // import { FastClick } from "fastclick";
 
 export class AnimatorModule {
+  private parent: EasyWebtoon;
+
   playQueue: number[] = [];
   isPlaying: boolean = false;
   fps: number = 20;
 
-  canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
-  prevCanvas: HTMLCanvasElement;
-  prevCtx: CanvasRenderingContext2D;
-  nextCanvas: HTMLCanvasElement;
-  nextCtx: CanvasRenderingContext2D;
+  canvas!: HTMLCanvasElement;
+  ctx!: CanvasRenderingContext2D;
+  prevCanvas!: HTMLCanvasElement;
+  prevCtx!: CanvasRenderingContext2D;
+  nextCanvas!: HTMLCanvasElement;
+  nextCtx!: CanvasRenderingContext2D;
 
-  constructor(fps: number) {
+  constructor(parent: EasyWebtoon, fps: number) {
+    this.parent = parent;
     this.fps = fps;
+  }
 
+  initialize() {
     this.canvas = document.createElement("canvas");
     this.canvas.id = "#app";
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -31,14 +37,18 @@ export class AnimatorModule {
     this.nextCtx = this.nextCanvas.getContext("2d") as CanvasRenderingContext2D;
     this.nextCtx.imageSmoothingEnabled = true;
 
-    this.setupFastClick();
+    // this.setupFastClick();
+
+    this.parent.eventListeners["animator-initialized"]?.forEach((cb) => {
+      cb();
+    });
   }
 
-  setupFastClick() {
-    console.log("apply fastclick...");
-    // FastClick.attach(document.body);
-    // FastClick.attach(this.canvas);
-  }
+  // setupFastClick() {
+  //   console.log("apply fastclick...");
+  //   // FastClick.attach(document.body);
+  //   // FastClick.attach(this.canvas);
+  // }
 
   setFPS(fps: number) {
     this.fps = fps;

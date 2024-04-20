@@ -1,4 +1,5 @@
 import GIF from "gif.js";
+import { EasyWebtoon } from "../easy.webtoon";
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -8,15 +9,33 @@ import {
 } from "../global/env";
 import { AnimatorModule } from "./animator.module";
 import { DataModule } from "./data.module";
+import { IModule } from "./imodule";
 import { ToolModule } from "./tool.module";
 import { DrawTools } from "./tools/draw.tool";
+import { ExportTools } from "./tools/export.tool";
+import { GuideTools } from "./tools/guide.tool";
+import { PageTools } from "./tools/page.tool";
+import { SequenceTools } from "./tools/sequence.tool";
 
-export class EventModule {
-  modules!: {
-    toolModule: ToolModule;
-    animatorModule: AnimatorModule;
-    dataModule: DataModule;
-  };
+type EventModuleType = {
+  toolModule: ToolModule;
+  animatorModule: AnimatorModule;
+  dataModule: DataModule;
+};
+
+type CustomEventType = {
+  type: (
+    | PageTools
+    | DrawTools
+    | GuideTools
+    | SequenceTools
+    | ExportTools
+  )["dataType"];
+  data: object;
+};
+
+export class EventModule extends IModule<EventModuleType> {
+  private parent: EasyWebtoon;
 
   lastTime: number = 0;
   lastPoint: Omit<Point, "thickness" | "mode"> | null = null;
@@ -45,6 +64,11 @@ export class EventModule {
 
   deadzone: boolean = false;
 
+  constructor(parent: EasyWebtoon) {
+    super();
+    this.parent = parent;
+  }
+
   setupCanvas() {
     const canvas = this.modules.animatorModule.canvas;
     const prevCanvas = this.modules.animatorModule.prevCanvas;
@@ -66,25 +90,22 @@ export class EventModule {
     this.modules.dataModule.currentToon.document.requestPageUpdate();
   }
 
-  use<T extends ToolModule | DataModule | AnimatorModule>(module: T) {
-    function lowerCase(word: string) {
-      return word[0].toLowerCase() + word.slice(1);
-    }
-    if (!this.modules) {
-      Object.assign(this, { modules: {} });
-    }
-    this.modules[lowerCase(module.constructor.name)] = module;
-  }
-
   destroy() {
     for (const { name, event } of this.eventList) {
       window.removeEventListener(name, event);
     }
     this.eventList = [];
+    this.parent.eventListeners["destroy"]?.forEach((cb) => {
+      cb();
+    });
   }
 
   private setupListener() {
     this.eventList.push(
+      {
+        name: "easywebtoon-command",
+        event: this.handleCommandEasyWebtoon.bind(this) as EventListener,
+      },
       {
         name: "touchstart",
         event: this.startDrawingTouch.bind(this) as EventListener,
@@ -123,6 +144,30 @@ export class EventModule {
 
   clearCanvas(ctx: CanvasRenderingContext2D) {
     this.modules.animatorModule.clearCanvas(ctx);
+  }
+
+  /* 추후 사용 예정 */
+  private handleCommandEasyWebtoon(e: CustomEvent<CustomEventType>) {
+    if (e.detail) {
+      switch (e.detail.type) {
+        case "pen": {
+          this.changeTool("pen");
+          break;
+        }
+        case "all-erase": {
+          this.changeTool("all-erase");
+          break;
+        }
+        case "erase": {
+          this.changeTool("erase");
+          break;
+        }
+        default: {
+          console.log("no type");
+          break;
+        }
+      }
+    }
   }
 
   private handleChange(e: Event) {
@@ -351,7 +396,7 @@ export class EventModule {
   }
 
   private async exportGif() {
-    const update = this.renderCanvas.bind(this);
+    // const update = this.renderCanvas.bind(this);
     const gif = new GIF({
       workers: 2,
       quality: 10,
@@ -417,7 +462,8 @@ export class EventModule {
         });
       }
     }
-    gif.on("finished", function (blob) {
+
+    gif.on("finished", (blob) => {
       const downloadUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.download = "result.gif";
@@ -427,7 +473,10 @@ export class EventModule {
       a.remove();
       percentage?.remove();
       progress?.remove();
-      update();
+      this.renderCanvas();
+      this.parent.eventListeners["export-gif"]?.forEach((cb) => {
+        cb();
+      });
     });
     gif.render();
   }

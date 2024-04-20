@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     /* 기본 옵션 */
-    "target": "ES2020", // 브라우저 호환성을 위해 ES5를 대상으로 함
+    "target": "ESNext", // 브라우저 호환성을 위해 ES5를 대상으로 함
     "module": "ESNext", // 모던 브라우저를 대상으로 할 때 ES6 모듈 사용
-    "lib": ["ES2020", "DOM", "DOM.Iterable"], // 브라우저 API와 ES6 기능을 사용
+    "lib": ["ESNext", "DOM", "DOM.Iterable"], // 브라우저 API와 ES6 기능을 사용
     "allowJs": true, // JS 파일을 TS와 함께 컴파일
     "checkJs": true, // .js 파일 내의 오류를 검사하지 않음
     // "jsx": "react", // JSX를 사용하는 경우 설정(React 프로젝트인 경우)

@@ -33,7 +33,7 @@ export default function AnchorTemporaryDrawer({
 
   useEffect(() => {
     if (easywebtoon) {
-      setToons(easywebtoon.dataModule.storage.data);
+      setToons([...easywebtoon.dataModule.storage.data]);
       setCurrentToon(easywebtoon.dataModule.currentToon.id);
     }
   }, [easywebtoon]);
@@ -76,7 +76,7 @@ export default function AnchorTemporaryDrawer({
             onClick={() => {
               easywebtoon?.dataModule.addToon();
               if (easywebtoon) {
-                setToons(() => easywebtoon.dataModule.storage.data);
+                setToons(() => [...easywebtoon.dataModule.storage.data]);
               }
             }}>
             추가

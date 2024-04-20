@@ -185,6 +185,24 @@ body {
       box-shadow: inset 5px 5px 1rem 0px #555, inset -5px -5px 1rem 0px #777,
         2px 2px 5px 0px #777, -2px -2px 5px 0px #eee;
     }
+    /* here */
+
+    [data-tool] {
+      position: relative;
+    }
+
+    div:has(> [data-tool="fps"]) {
+      &::before {
+        content: "FPS:";
+      }
+    }
+
+    [data-tool][active] {
+      background-color: #2d8661;
+      box-shadow: inset 5px 5px 1rem 0px #166d49,
+        inset -5px -5px 1rem 0px #2ba371, 2px 2px 5px 0px #2ba371,
+        -2px -2px 5px 0px #9cd4bd;
+    }
   }
 }
 
@@ -204,10 +222,6 @@ body {
   @include radius(0.2rem);
   @include animation("place-bottom", 150ms ease-in-out both);
   @include transform(translate(-50%, 0%));
-}
-
-[data-tool] {
-  position: relative;
 }
 
 $popup-map: (
@@ -246,18 +260,6 @@ $popup-map: (
 
   both-side-lines: "가이드 라인 활성",
 );
-
-div:has(> [data-tool="fps"]) {
-  &::before {
-    content: "FPS:";
-  }
-}
-
-[data-tool][active] {
-  background-color: #2d8661;
-  box-shadow: inset 5px 5px 1rem 0px #166d49, inset -5px -5px 1rem 0px #2ba371,
-    2px 2px 5px 0px #2ba371, -2px -2px 5px 0px #9cd4bd;
-}
 
 @each $dataset, $content in $popup-map {
   @if type-of($content) == map {
