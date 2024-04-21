@@ -1,5 +1,6 @@
 import { EasyWebtoon } from "../easy.webtoon";
 import { AUTHOR, VERSION } from "../global/env";
+import { ERROR_CODE } from "../models/error.code";
 import { Toon } from "../models/toon";
 
 interface IEasyWebtoonStorage {
@@ -60,18 +61,36 @@ export class DataModule {
     this.currentToon = currentToon;
     localStorage.setItem(this.STORE_CURRENT_KEY, currentToon.id);
     this.parent.eventListeners["setCurrentToon"]?.forEach((cb) => {
-      cb();
+      cb({ message: ERROR_CODE["t399"] });
     });
   }
 
   removeToon(id: string) {
-    if (this.storage.data.length <= 1) return;
+    /* 최소 1개로 제한 */
+    if (this.storage.data.length <= 1) {
+      this.parent.eventListeners["remove-toon"]?.forEach((cb) => {
+        cb({ message: ERROR_CODE["t400"] });
+      });
+      return;
+    }
+
     const index = this.storage.data.findIndex((toon) => toon.id === id);
+    const isSameCurrent = this.storage.data[index] === this.currentToon;
+
     if (index > -1) {
       this.storage.data.splice(index, 1);
       this.save(true);
+
+      if (isSameCurrent) {
+        if (index < this.storage.data.length - 1) {
+          this.setCurrent(this.storage.data[index + 1]);
+        } else {
+          this.setCurrent(this.storage.data[this.storage.data.length - 1]);
+        }
+      }
+
       this.parent.eventListeners["remove-toon"]?.forEach((cb) => {
-        cb();
+        cb({ message: ERROR_CODE["t200"] });
       });
     }
   }
@@ -82,7 +101,7 @@ export class DataModule {
       toon.title = title;
       this.save(true);
       this.parent.eventListeners["change-toon-title"]?.forEach((cb) => {
-        cb();
+        cb({ message: ERROR_CODE["t401"] });
       });
     }
   }
@@ -115,7 +134,7 @@ export class DataModule {
     );
     if (!isAuto) {
       this.parent.eventListeners["load"]?.forEach((cb) => {
-        cb();
+        cb({ message: ERROR_CODE["d001"] });
       });
     }
     return storageCopy;
@@ -129,7 +148,7 @@ export class DataModule {
     localStorage.setItem(this.STORE_KEY, JSON.stringify(this.storage));
     if (!isAuto) {
       this.parent.eventListeners["save"]?.forEach((cb) => {
-        cb();
+        cb({ message: ERROR_CODE["d002"] });
       });
     }
   }
@@ -145,7 +164,7 @@ export class DataModule {
     this.storage.data.push(toon);
     this.saveWithoutCurrentToon(toon);
     this.parent.eventListeners["create-toon"]?.forEach((cb) => {
-      cb();
+      cb({ message: ERROR_CODE["t001"] });
     });
   }
 

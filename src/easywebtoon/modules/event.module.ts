@@ -16,6 +16,7 @@ import { ExportTools } from "./tools/export.tool";
 import { GuideTools } from "./tools/guide.tool";
 import { PageTools } from "./tools/page.tool";
 import { SequenceTools } from "./tools/sequence.tool";
+import { ERROR_CODE } from "../models/error.code";
 
 type EventModuleType = {
   toolModule: ToolModule;
@@ -51,7 +52,7 @@ export class EventModule extends IModule<EventModuleType> {
 
   isDrawing: boolean = false;
 
-  mode: "pen" | "erase" = "pen";
+  mode: "pen" | "erase" | "paint" = "pen";
 
   isPlaying: boolean = false;
 
@@ -156,6 +157,10 @@ export class EventModule extends IModule<EventModuleType> {
   private handleCommandEasyWebtoon(e: CustomEvent<CustomEventType>) {
     if (e.detail) {
       switch (e.detail.type) {
+        // case "paint": {
+        //   this.changeTool("paint");
+        //   break;
+        // }
         case "pen": {
           this.changeTool("pen");
           break;
@@ -177,6 +182,7 @@ export class EventModule extends IModule<EventModuleType> {
           if (toon) {
             this.modules.dataModule.setCurrent(toon);
             this.renderCanvas();
+            this.modules.dataModule.currentToon.document.requestPageUpdate();
           }
           break;
         }
@@ -184,6 +190,7 @@ export class EventModule extends IModule<EventModuleType> {
           const { id } = e.detail.data;
           this.modules.dataModule.removeToon(id);
           this.renderCanvas();
+          this.modules.dataModule.currentToon.document.requestPageUpdate();
           break;
         }
         case "change-toon-title": {
@@ -282,6 +289,9 @@ export class EventModule extends IModule<EventModuleType> {
       if (closest(target, "tool", "undo")) {
         this.changeTool("undo");
       }
+      // if (closest(target, "tool", "paint")) {
+      //   this.changeTool("paint");
+      // }
       if (closest(target, "tool", "pen")) {
         this.changeTool("pen");
       }
@@ -387,6 +397,9 @@ export class EventModule extends IModule<EventModuleType> {
         el.removeAttribute("hidden");
         el.classList.remove("hidden");
       });
+      this.parent.eventListeners["gif-repeat"]?.forEach((cb) => {
+        cb({ message: ERROR_CODE["g002"] });
+      });
     } else {
       repeatDelay.forEach((el) => {
         el.setAttribute("hidden", "true");
@@ -395,6 +408,9 @@ export class EventModule extends IModule<EventModuleType> {
       useRepeatDelay.forEach((el) => {
         el.setAttribute("hidden", "true");
         el.classList.add("hidden");
+      });
+      this.parent.eventListeners["gif-repeat"]?.forEach((cb) => {
+        cb({ message: ERROR_CODE["g003"] });
       });
     }
   }
@@ -426,7 +442,6 @@ export class EventModule extends IModule<EventModuleType> {
   }
 
   private async exportGif() {
-    // const update = this.renderCanvas.bind(this);
     const gif = new GIF({
       workers: 2,
       quality: 10,
@@ -505,7 +520,7 @@ export class EventModule extends IModule<EventModuleType> {
       progress?.remove();
       this.renderCanvas();
       this.parent.eventListeners["export-gif"]?.forEach((cb) => {
-        cb();
+        cb({ message: ERROR_CODE["g001"] });
       });
     });
     gif.render();
@@ -525,7 +540,7 @@ export class EventModule extends IModule<EventModuleType> {
       this.modules.animatorModule.nextCtx
     );
 
-    console.log("playing...", this.isPlaying);
+    // console.log("playing...", this.isPlaying);
 
     if (!this.isPlaying) {
       this.isPlaying = true;
@@ -540,7 +555,7 @@ export class EventModule extends IModule<EventModuleType> {
         this.modules.dataModule.currentToon,
         this.modules.animatorModule.ctx
       );
-      console.log("done!");
+      // console.log("done!");
 
       this.playReady = window.setTimeout(() => {
         this.modules.animatorModule.clearPlayQueue();
@@ -611,18 +626,27 @@ export class EventModule extends IModule<EventModuleType> {
   private changeTool(tool: DrawTools["dataType"]) {
     function clearActivates() {
       const selectables = document.querySelectorAll(
-        `[data-tool="pen"],[data-tool="erase"]`
+        `[data-tool="pen"],[data-tool="erase"],[data-tool="paint"]`
       );
       selectables.forEach((el) => el.removeAttribute("active"));
     }
 
-    if (tool === "pen") {
+    /* if (tool === "paint") {
+      this.modules.toolModule.cursorUpdate("paint");
+      clearActivates();
+      const pens = document.querySelectorAll('[data-tool="paint"]');
+      pens.forEach((el) => el.setAttribute("active", ""));
+      this.mode = "paint";
+      this.setLineWidth(this.thickness);
+    } else */ if (tool === "pen") {
+      this.modules.toolModule.cursorUpdate("pen");
       clearActivates();
       const pens = document.querySelectorAll('[data-tool="pen"]');
       pens.forEach((el) => el.setAttribute("active", ""));
       this.mode = "pen";
       this.setLineWidth(this.thickness);
     } else if (tool === "erase") {
+      this.modules.toolModule.cursorUpdate("erase");
       clearActivates();
       const erases = document.querySelectorAll('[data-tool="erase"]');
       erases.forEach((el) => el.setAttribute("active", ""));
@@ -682,7 +706,7 @@ export class EventModule extends IModule<EventModuleType> {
       .querySelectorAll<HTMLInputElement>('[data-tool="thickness"]')
       .forEach((item) => {
         const thickness = +target.value;
-        if (this.mode === "pen") {
+        if (this.mode === "pen" || this.mode === "paint") {
           this.setLineWidth((this.thickness = thickness));
         } else if (this.mode === "erase") {
           this.setLineWidth((this.eraseSize = thickness));
@@ -700,7 +724,29 @@ export class EventModule extends IModule<EventModuleType> {
     if (!this.isMobile[0]) {
       this.isMobile[1] = true;
     }
+
     e.preventDefault();
+
+    // /* paint tool 제거 */
+    // if (this.mode === "paint") {
+    //   const x = e.offsetX;
+    //   const y = e.offsetY;
+    //   const point = { x, y };
+
+    //   this.modules.dataModule.currentToon.document.startLine();
+    //   const thickness = this.thickness;
+    //   const dots = this.modules.dataModule.currentToon.document.paint(
+    //     this.modules.animatorModule,
+    //     point,
+    //     "#000000ff"
+    //   );
+    //   dots.forEach((d) => {
+    //     this.modules.dataModule.currentToon.document
+    //       .getLastLine()
+    //       .push({ mode: "paint", x: d.x, y: d.y, thickness });
+    //   });
+    //   return;
+    // }
 
     const x = e.offsetX;
     const y = e.offsetY;
@@ -713,6 +759,8 @@ export class EventModule extends IModule<EventModuleType> {
   }
 
   private startDrawingTouch(e: TouchEvent) {
+    if (this.mode === "paint") return;
+
     if (this.isMobile[1]) return;
     const target = e.target;
 
@@ -783,6 +831,8 @@ export class EventModule extends IModule<EventModuleType> {
   }
 
   draw(e: MouseEvent) {
+    if (this.mode === "paint") return;
+
     if (this.isMobile[0]) return;
     if (!this.isDrawing) return;
 
@@ -802,10 +852,12 @@ export class EventModule extends IModule<EventModuleType> {
     this.modules.dataModule.currentToon.document
       .getLastLine()
       .push({ mode, x, y, thickness });
-    this.renderCanvas();
+    this.lastRenderCanvas();
   }
 
   drawMobile(e: TouchEvent) {
+    if (this.mode === "paint") return;
+
     if (this.isMobile[1]) return;
     if (!this.isDrawing) return;
 
@@ -832,7 +884,81 @@ export class EventModule extends IModule<EventModuleType> {
       this.modules.dataModule.currentToon.document
         .getLastLine()
         .push({ mode, x, y, thickness });
-      this.renderCanvas();
+      this.lastRenderCanvas();
+    }
+  }
+
+  lastRenderCanvas() {
+    const current = this.modules.dataModule.currentToon;
+    if (current) {
+      const prevPage = current.document.getPrevPage();
+      const nextPage = current.document.getNextPage();
+      const page = current.document.getPage();
+      // this.modules.animatorModule.clearCanvas(
+      //   this.modules.animatorModule.prevCtx
+      // );
+      // this.modules.animatorModule.clearCanvas(
+      //   this.modules.animatorModule.nextCtx
+      // );
+      // const image = this.modules.animatorModule.canvas.toDataURL("image/png");
+      // const img = document.createElement("img");
+      // img.src = image;
+      // img.onloadedmetadata = () => {
+      //   this.modules.animatorModule.clearCanvas(
+      //     this.modules.animatorModule.ctx
+      //   );
+      //   this.modules.animatorModule.ctx.drawImage(img, 0, 0);
+      // };
+
+      if (
+        !this.modules.animatorModule.rendered[0] &&
+        this.showBothSideLines &&
+        prevPage
+      ) {
+        this.modules.animatorModule.rendered[0] = true;
+        this.modules.animatorModule.renderCanvas(
+          prevPage,
+          "#8188f0",
+          this.modules.dataModule.currentToon.document.scale,
+          this.modules.animatorModule.prevCtx
+        );
+      }
+      if (
+        !this.modules.animatorModule.rendered[1] &&
+        this.showBothSideLines &&
+        nextPage
+      ) {
+        this.modules.animatorModule.rendered[1] = true;
+        this.modules.animatorModule.renderCanvas(
+          nextPage,
+          "#72b063",
+          this.modules.dataModule.currentToon.document.scale,
+          this.modules.animatorModule.nextCtx
+        );
+      }
+      if (page) {
+        // const c = document.createElement("canvas");
+        // const ct = c.getContext("2d");
+        // ct?.drawImage(this.modules.animatorModule.canvas, 0, 0);
+        // console.log(c.toDataURL("image/png"));
+
+        // this.modules.animatorModule.ctx.restore();
+
+        // this.modules.animatorModule.clearCanvas(
+        //   this.modules.animatorModule.ctx
+        // );
+
+        // this.modules.animatorModule.ctx.drawImage(c, 0, 0);
+        // c.remove();
+
+        this.modules.animatorModule.lastPathRenderCanvas(
+          page,
+          "#000000ff",
+          this.modules.dataModule.currentToon.document.scale,
+          this.modules.animatorModule.ctx
+        );
+        this.modules.animatorModule.ctx.save();
+      }
     }
   }
 
@@ -868,7 +994,7 @@ export class EventModule extends IModule<EventModuleType> {
       if (page) {
         this.modules.animatorModule.renderCanvas(
           page,
-          "#000000",
+          "#000000ff",
           this.modules.dataModule.currentToon.document.scale,
           this.modules.animatorModule.ctx
         );

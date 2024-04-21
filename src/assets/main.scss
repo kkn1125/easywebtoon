@@ -91,8 +91,6 @@ body,
   }
 }
 
-
-
 canvas {
   cursor: none;
 }
@@ -119,51 +117,6 @@ body {
     .hidden,
     [hidden] {
       display: none;
-    }
-    .progress {
-      width: 300px;
-      height: 20px;
-
-      .progress-bar {
-        display: inline-block;
-        border: 1px solid #ccc;
-        background-color: #fff;
-        @include radius(0.3rem);
-        width: inherit;
-        height: inherit;
-
-        .progress-value {
-          $size: 7.6px;
-          display: inline-block;
-          width: 0%;
-          height: inherit;
-          background: repeating-linear-gradient(
-            -45deg,
-            #04aa6d,
-            #04aa6d $size,
-            #5ac19b $size,
-            #5ac19b #{$size * 2},
-            #04aa6d #{$size * 2},
-            #04aa6d #{$size * 3},
-            #5ac19b #{$size * 3},
-            #5ac19b #{$size * 4},
-            #04aa6d #{$size * 4},
-            #04aa6d #{$size * 5},
-            #5ac19b #{$size * 5},
-            #5ac19b #{$size * 6},
-            #04aa6d #{$size * 6},
-            #04aa6d #{$size * 7},
-            #5ac19b #{$size * 7},
-            #5ac19b #{$size * 8},
-            #04aa6d #{$size * 8},
-            #04aa6d #{$size * 9},
-            #5ac19b #{$size * 9},
-            #5ac19b #{$size * 10}
-          );
-          @include radius(0.3rem);
-          @include animation("move-stripes", 7s linear infinite);
-        }
-      }
     }
 
     input[type="number"] {
@@ -202,6 +155,52 @@ body {
       box-shadow: inset 5px 5px 1rem 0px #166d49,
         inset -5px -5px 1rem 0px #2ba371, 2px 2px 5px 0px #2ba371,
         -2px -2px 5px 0px #9cd4bd;
+    }
+  }
+}
+
+.progress {
+  width: 300px;
+  height: 20px;
+
+  .progress-bar {
+    display: inline-block;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    @include radius(0.3rem);
+    width: inherit;
+    height: inherit;
+
+    .progress-value {
+      $size: 7.6px;
+      display: inline-block;
+      width: 0%;
+      height: inherit;
+      background: repeating-linear-gradient(
+        -45deg,
+        #04aa6d,
+        #04aa6d $size,
+        #5ac19b $size,
+        #5ac19b #{$size * 2},
+        #04aa6d #{$size * 2},
+        #04aa6d #{$size * 3},
+        #5ac19b #{$size * 3},
+        #5ac19b #{$size * 4},
+        #04aa6d #{$size * 4},
+        #04aa6d #{$size * 5},
+        #5ac19b #{$size * 5},
+        #5ac19b #{$size * 6},
+        #04aa6d #{$size * 6},
+        #04aa6d #{$size * 7},
+        #5ac19b #{$size * 7},
+        #5ac19b #{$size * 8},
+        #04aa6d #{$size * 8},
+        #04aa6d #{$size * 9},
+        #5ac19b #{$size * 9},
+        #5ac19b #{$size * 10}
+      );
+      @include radius(0.3rem);
+      @include animation("move-stripes", 7s linear infinite);
     }
   }
 }
@@ -255,7 +254,7 @@ $popup-map: (
   prev-page: "이전 페이지",
   next-page: "다음 페이지",
 
-  undo: "되돌리기",
+  undo: "마지막 라인 제거",
   total: "전체 페이지",
 
   both-side-lines: "가이드 라인 활성",

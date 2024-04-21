@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { AnimatorModule } from "../modules/animator.module";
 
 export class AniDocument {
   id: string = "";
@@ -123,6 +124,90 @@ export class AniDocument {
   getFrames() {
     return this.pages;
   }
+
+  /* localstorage 용량 문제로 제거 */
+  // paint(
+  //   animator: AnimatorModule,
+  //   { x, y }: { x: number; y: number },
+  //   color: string = "#ffffffff"
+  // ) {
+  //   const imageData = animator.ctx.getImageData(
+  //     0,
+  //     0,
+  //     animator.canvas.width,
+  //     animator.canvas.height
+  //   );
+
+  //   const visited: boolean[][] = Array(imageData.height)
+  //     .fill(null)
+  //     .map(() => Array(imageData.width).fill(false));
+
+  //   function getColor(x: number, y: number) {
+  //     const poX = (imageData.width * y + x) * 4;
+  //     const toHex = (x: number) => x.toString(16).padStart(2, "0");
+  //     const r = imageData.data[poX];
+  //     const g = imageData.data[poX + 1];
+  //     const b = imageData.data[poX + 2];
+  //     const a = imageData.data[poX + 3];
+  //     return `#${toHex(r)}${toHex(g)}${toHex(b)}${toHex(a)}`;
+  //   }
+
+  //   function setPixel(x: number, y: number, color: string) {
+  //     const poX = (imageData.width * y + x) * 4;
+  //     const colorInt = parseInt(color.slice(1), 16);
+  //     imageData.data[poX] = (colorInt >> 24) & 255;
+  //     imageData.data[poX + 1] = (colorInt >> 16) & 255;
+  //     imageData.data[poX + 2] = (colorInt >> 8) & 255;
+  //     imageData.data[poX + 3] = colorInt & 255;
+  //   }
+
+  //   const targetColor = getColor(x, y);
+  //   if (targetColor === color) return []; // 이미 같은 색이면 아무것도 하지 않음
+  //   const stack = [{ x, y }];
+  //   const dots: { x: number; y: number }[] = [];
+  //   while (stack.length > 0) {
+  //     const { x, y } = stack.pop()!;
+
+  //     if (x < 0 || y < 0 || x >= imageData.width || y >= imageData.height)
+  //       continue;
+  //     if (visited[y][x]) continue;
+
+  //     // const gap = 3;
+  //     // if (x % gap === 0 || y % gap === 0) {
+  //     dots.push({ x, y });
+  //     // }
+
+  //     const currentColor = getColor(x, y);
+  //     if (currentColor === targetColor) {
+  //       setPixel(x, y, color);
+  //       visited[y][x] = true;
+  //       // stack.push({ x: x + 1, y: y + 1 });
+  //       // stack.push({ x: x + 1, y: y - 1 });
+  //       // stack.push({ x: x - 1, y: y + 1 });
+  //       // stack.push({ x: x - 1, y: y - 1 });
+
+  //       stack.push({ x: x + 1, y: y });
+  //       stack.push({ x: x - 1, y: y });
+  //       stack.push({ x: x, y: y + 1 });
+  //       stack.push({ x: x, y: y - 1 });
+  //     } else if (!currentColor.endsWith("ff")) {
+  //       setPixel(x, y, color);
+  //       visited[y][x] = true;
+  //       // stack.push({ x: x + 1, y: y + 1 });
+  //       // stack.push({ x: x + 1, y: y - 1 });
+  //       // stack.push({ x: x - 1, y: y + 1 });
+  //       // stack.push({ x: x - 1, y: y - 1 });
+
+  //       stack.push({ x: x + 1, y: y });
+  //       stack.push({ x: x - 1, y: y });
+  //       stack.push({ x: x, y: y + 1 });
+  //       stack.push({ x: x, y: y - 1 });
+  //     }
+  //   }
+
+  //   // this.ctx.putImageData(imageData, 0, 0);
+  //   return dots;
+  // }
 
   /* event */
   requestPageUpdate() {

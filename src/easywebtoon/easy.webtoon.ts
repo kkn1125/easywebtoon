@@ -1,4 +1,5 @@
 import { runQueue } from "./global/variables";
+import { ERROR_CODE } from "./models/error.code";
 import { AnimatorModule } from "./modules/animator.module";
 import { DataModule } from "./modules/data.module";
 import { EventModule } from "./modules/event.module";
@@ -56,6 +57,8 @@ export class EasyWebtoon {
     eventModule.use(dataModule);
 
     this.toolModule = toolModule;
+    this.toolModule.setupCursor();
+
     this.animatorModule = animatorModule;
     this.dataModule = dataModule;
     this.eventModule = eventModule;
@@ -94,7 +97,7 @@ export class EasyWebtoon {
     runQueue.push(1);
 
     this.eventListeners["app-loaded"]?.forEach((cb) => {
-      cb();
+      cb({ message: ERROR_CODE["a001"] });
     });
   }
 
@@ -116,6 +119,8 @@ export class EasyWebtoon {
     sequenceTool.innerHTML = "";
     exportTool.innerHTML = "";
 
+    this.eventListeners = {};
+
     this.eventModule.destroy();
   }
 
@@ -129,7 +134,7 @@ export class EasyWebtoon {
           | ExportTools
         )["dataType"]
       | OnEventNames,
-    cb: () => void
+    cb: (response: EventResponseType) => void
   ) {
     if (!(type in this.eventListeners) && !this.eventListeners[type]) {
       this.eventListeners[type] = [];

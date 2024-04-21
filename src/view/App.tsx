@@ -112,30 +112,40 @@ function App() {
     const exportTool = document.getElementById("export-tool");
     if (exportTool) easywebtoon.setGroupExportTool(exportTool);
 
-    easywebtoon.on("app-loaded", () => {
-      addAlert("text", "app loaded!");
+    easywebtoon.on("app-loaded", ({ message }) => {
+      addAlert("text", message);
     });
 
     easywebtoon.run();
 
     /* easywebtoon event listeners */
-    easywebtoon.on("create-toon", () => {
-      addInfoAlert("success create new toon!");
+    easywebtoon.on("create-toon", ({ message }) => {
+      addInfoAlert(message);
     });
-    easywebtoon.on("save", () => {
-      addInfoAlert("success save current data!");
+    easywebtoon.on("setCurrentToon", ({ message }) => {
+      addInfoAlert(message);
     });
-    easywebtoon.on("load", () => {
-      addInfoAlert("succss loaded data!");
+    easywebtoon.on("save", ({ message }) => {
+      addInfoAlert(message);
     });
-    easywebtoon.on("export-gif", () => {
-      addInfoAlert("succss export data to gif!");
+    easywebtoon.on("load", ({ message }) => {
+      addInfoAlert(message);
     });
-    easywebtoon.on("change-toon-title", () => {
-      addInfoAlert("툰 이름을 변경했습니다.");
+    easywebtoon.on("export-gif", ({ message }) => {
+      addInfoAlert(message);
     });
-    easywebtoon.on("remove-toon", () => {
-      addErrorAlert("선택한 툰을 제거했습니다.");
+    easywebtoon.on("gif-repeat", ({ message }) => {
+      addInfoAlert(message);
+    });
+    easywebtoon.on("change-toon-title", ({ message }) => {
+      addInfoAlert(message);
+    });
+    easywebtoon.on("remove-toon", ({ message }) => {
+      addErrorAlert(message);
+    });
+
+    window.addEventListener("beforeunload", () => {
+      return "페이지를 나가시겠습니까?";
     });
 
     return () => {

@@ -1,5 +1,5 @@
 declare type Point = {
-  mode: "pen" | "erase";
+  mode: "pen" | "erase" | "paint";
   x: number;
   y: number;
   thickness: number;
@@ -39,3 +39,7 @@ declare type OnEventNames =
   | "change-toon-title"
   | "tool-initialized"
   | "setCurrentToon";
+
+declare type EventResponseType = {
+  message: ERROR_CODE;
+};

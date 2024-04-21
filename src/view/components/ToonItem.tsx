@@ -43,7 +43,7 @@ function ToonItem({ toon }: { toon: Toon }) {
 
   return (
     <ListItem disablePadding>
-      <ListItemButton>
+      <ListItemButton onClick={() => handleSelectToon(id)}>
         {easywebtoon.dataModule.currentToon.id === id && (
           <ListItemIcon>
             <DoneAllIcon />
@@ -67,7 +67,7 @@ function ToonItem({ toon }: { toon: Toon }) {
             }}
           />
         ) : (
-          <ListItemText primary={title} onClick={() => handleSelectToon(id)} />
+          <ListItemText primary={title} />
         )}
       </ListItemButton>
 
