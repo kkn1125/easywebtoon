@@ -121,6 +121,10 @@ export class EventModule extends IModule<EventModuleType> {
         name: "mousedown",
         event: this.startDrawing.bind(this) as EventListener,
       },
+      {
+        name: "touchend",
+        event: this.stopDrawingMobile.bind(this) as EventListener,
+      },
       { name: "mouseup", event: this.stopDrawing.bind(this) as EventListener },
       { name: "mouseout", event: this.stopDrawing.bind(this) as EventListener },
       { name: "mousemove", event: this.draw.bind(this) as EventListener },
@@ -200,7 +204,7 @@ export class EventModule extends IModule<EventModuleType> {
           break;
         }
         default: {
-          console.log("no type");
+          // console.log("no type");
           break;
         }
       }
@@ -788,6 +792,8 @@ export class EventModule extends IModule<EventModuleType> {
     const width =
       this.modules.animatorModule.canvas.getBoundingClientRect().width;
 
+    const offsetX =
+      this.modules.animatorModule.canvas.getBoundingClientRect().left;
     const offsetY =
       this.modules.animatorModule.canvas.getBoundingClientRect().top;
 
@@ -796,7 +802,7 @@ export class EventModule extends IModule<EventModuleType> {
 
     const { clientX, clientY } = e.touches[0];
 
-    const x = clientX;
+    const x = clientX - offsetX;
     const y = clientY - offsetY;
     const point = { x, y };
     this.lastPoint = point;
@@ -819,7 +825,44 @@ export class EventModule extends IModule<EventModuleType> {
     });
   }
 
+  private stopDrawingMobile(_e: TouchEvent) {
+    // console.log("mob");
+    if (
+      (this.modules.dataModule.currentToon.document.getLastLine() ?? [])
+        .length === 0
+    ) {
+      const thickness = this.lineWidth;
+      const mode = this.mode;
+      this.modules.dataModule.currentToon.document.getLastLine()?.push({
+        mode,
+        x: this.lastPoint?.x || 0,
+        y: this.lastPoint?.y || 0,
+        thickness,
+      });
+    }
+
+    this.isDrawing = false;
+    this.lastPoint = null;
+    // 빈 라인 배열 정리
+    const isNoLine = this.modules.dataModule.currentToon.document.isNoLine();
+    if (isNoLine) return;
+    const lastLine = this.modules.dataModule.currentToon.document.getLastLine();
+    if (lastLine.length === 0) {
+      this.modules.dataModule.currentToon.document.removeEmptyLine();
+    }
+    // this.isMobile[0] = false;
+    this.isMobile[1] = false;
+    this.renderCanvas();
+  }
+
   private stopDrawing(_e: MouseEvent) {
+    if (this.isMobile[0]) {
+      this.isMobile[0] = false;
+      this.isMobile[1] = false;
+      return;
+    }
+    // console.log("pc");
+
     if (
       (this.modules.dataModule.currentToon.document.getLastLine() ?? [])
         .length === 0
