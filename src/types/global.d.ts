@@ -36,8 +36,10 @@ declare type OnEventNames =
   | "create-toon"
   | "select-toon"
   | "remove-toon"
+  | "remove-page"
   | "change-toon-title"
   | "tool-initialized"
+  | "no-copy-page"
   | "setCurrentToon";
 
 declare type EventResponseType = {

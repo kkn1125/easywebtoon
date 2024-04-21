@@ -8,7 +8,7 @@ import AnchorTemporaryDrawer from "./AnchorTemporaryDrawer";
 export default function ButtonAppBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position='static' sx={{ background: "#555" }}>
+      <AppBar position='static' sx={{ background: "#555", px: 2 }}>
         <Toolbar>
           <AnchorTemporaryDrawer />
           <Box>

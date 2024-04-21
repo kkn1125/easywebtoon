@@ -69,7 +69,7 @@ export class DataModule {
     /* 최소 1개로 제한 */
     if (this.storage.data.length <= 1) {
       this.parent.eventListeners["remove-toon"]?.forEach((cb) => {
-        cb({ message: ERROR_CODE["t400"] });
+        cb({ message: ERROR_CODE["t404"] });
       });
       return;
     }
@@ -171,11 +171,17 @@ export class DataModule {
   copyPage() {
     const page = this.currentToon.document.getPage();
     localStorage.setItem(this.COPY_STORE_KEY, JSON.stringify(page));
+    this.parent.eventListeners["copy-page"]?.forEach((cb) => {
+      cb({ message: ERROR_CODE["p200"] });
+    });
   }
-
+  
   clearCopyPage() {
     localStorage.removeItem(this.COPY_STORE_KEY);
-    console.log("delete copy page!");
+    // console.log("delete copy page!");
+    this.parent.eventListeners["clear-copy-page"]?.forEach((cb) => {
+      cb({ message: ERROR_CODE["p201"] });
+    });
   }
 
   pastePage() {
@@ -187,11 +193,17 @@ export class DataModule {
     const jsonPage = JSON.parse(copyPage);
 
     if (jsonPage.length === 0) {
-      alert("복사된 페이지가 없습니다!");
+      // alert("복사된 페이지가 없습니다!");
+      this.parent.eventListeners["no-copy-page"]?.forEach((cb) => {
+        cb({ message: ERROR_CODE["p404"] });
+      });
       return;
     }
 
-    console.log("success paste page!");
+    // console.log("success paste page!");
     this.currentToon.document.pastePage(jsonPage);
+    this.parent.eventListeners["paste-page"]?.forEach((cb) => {
+      cb({ message: ERROR_CODE["p204"] });
+    });
   }
 }

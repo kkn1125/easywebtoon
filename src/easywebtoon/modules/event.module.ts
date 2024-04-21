@@ -226,6 +226,12 @@ export class EventModule extends IModule<EventModuleType> {
 
   private handleDeleteBtn() {
     this.modules.dataModule.currentToon.document.removePage();
+    this.parent.eventListeners["remove-page"]?.forEach((cb) => {
+      const text = ` [${
+        this.modules.dataModule.currentToon.document.currentPage + 1
+      }/${this.modules.dataModule.currentToon.document.pages.length}]`;
+      cb({ message: ERROR_CODE["p400"] + text });
+    });
     this.renderCanvas();
   }
 
@@ -250,17 +256,29 @@ export class EventModule extends IModule<EventModuleType> {
       /* page functions */
       if (closest(target, "tool", "create-page-before")) {
         this.modules.dataModule.currentToon.document.addPageBefore();
+        const text = ` [${
+          this.modules.dataModule.currentToon.document.currentPage + 1
+        }/${this.modules.dataModule.currentToon.document.pages.length}]`;
+        this.parent.eventListeners["create-page-before"]?.forEach((cb) => {
+          cb({ message: ERROR_CODE["p202"] + text });
+        });
         this.renderCanvas();
       }
       if (closest(target, "tool", "create-page-after")) {
         this.modules.dataModule.currentToon.document.addPageAfter();
+        const text = ` [${
+          this.modules.dataModule.currentToon.document.currentPage + 1
+        }/${this.modules.dataModule.currentToon.document.pages.length}]`;
+        this.parent.eventListeners["create-page-after"]?.forEach((cb) => {
+          cb({ message: ERROR_CODE["p203"] + text });
+        });
         this.renderCanvas();
       }
       if (closest(target, "tool", "copy-page")) {
         this.modules.dataModule.copyPage();
       }
       if (closest(target, "tool", "clear-copy-page")) {
-        console.log("clear copy");
+        // console.log("clear copy");
         this.modules.dataModule.clearCopyPage();
       }
       if (closest(target, "tool", "paste-page")) {
@@ -866,6 +884,8 @@ export class EventModule extends IModule<EventModuleType> {
     const width =
       this.modules.animatorModule.canvas.getBoundingClientRect().width;
 
+    const offsetX =
+      this.modules.animatorModule.canvas.getBoundingClientRect().left;
     const offsetY =
       this.modules.animatorModule.canvas.getBoundingClientRect().top;
 
@@ -873,7 +893,7 @@ export class EventModule extends IModule<EventModuleType> {
     this.modules.dataModule.currentToon.document.setScale(scale);
 
     for (const { clientX, clientY } of e.touches) {
-      const x = clientX;
+      const x = clientX - offsetX;
       const y = clientY - offsetY;
       const point = { x, y };
 

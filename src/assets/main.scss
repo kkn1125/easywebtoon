@@ -135,8 +135,8 @@ body {
       border: none;
       background-color: #666666;
       color: #fff;
-      box-shadow: inset 5px 5px 1rem 0px #555, inset -5px -5px 1rem 0px #777,
-        2px 2px 5px 0px #777, -2px -2px 5px 0px #eee;
+      box-shadow: 0 0 0 1px #ccc; /* inset 5px 5px 1rem 0px #555, inset -5px -5px 1rem 0px #777,
+        2px 2px 5px 0px #777, -2px -2px 5px 0px #eee */
     }
     /* here */
 

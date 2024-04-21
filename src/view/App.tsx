@@ -9,7 +9,13 @@ import useAlert from "./hooks/useAlert";
 function App() {
   const { easywebtoon } = useContext(EasyWebtoonContext);
   // const [easywebtoon, setEasywebtoon] = useState<EasyWebtoon>();
-  const { addAlert, addInfoAlert, addErrorAlert } = useAlert();
+  const {
+    addAlert,
+    addPrimaryAlert,
+    addInfoAlert,
+    addErrorAlert,
+    addWarningAlert,
+  } = useAlert();
 
   useEffect(() => {
     function handleFakeMouse(e: MouseEvent) {
@@ -113,7 +119,7 @@ function App() {
     if (exportTool) easywebtoon.setGroupExportTool(exportTool);
 
     easywebtoon.on("app-loaded", ({ message }) => {
-      addAlert("text", message);
+      addAlert("success", message);
     });
 
     easywebtoon.run();
@@ -140,6 +146,27 @@ function App() {
     easywebtoon.on("change-toon-title", ({ message }) => {
       addInfoAlert(message);
     });
+    easywebtoon.on("copy-page", ({ message }) => {
+      addPrimaryAlert(message);
+    });
+    easywebtoon.on("remove-page", ({ message }) => {
+      addPrimaryAlert(message);
+    });
+    easywebtoon.on("create-page-before", ({ message }) => {
+      addPrimaryAlert(message);
+    });
+    easywebtoon.on("create-page-after", ({ message }) => {
+      addPrimaryAlert(message);
+    });
+    easywebtoon.on("clear-copy-page", ({ message }) => {
+      addInfoAlert(message);
+    });
+    easywebtoon.on("paste-page", ({ message }) => {
+      addInfoAlert(message);
+    });
+    easywebtoon.on("no-copy-page", ({ message }) => {
+      addWarningAlert(message);
+    });
     easywebtoon.on("remove-toon", ({ message }) => {
       addErrorAlert(message);
     });
@@ -151,7 +178,14 @@ function App() {
     return () => {
       easywebtoon.destroy();
     };
-  }, [addAlert, addErrorAlert, addInfoAlert, easywebtoon]);
+  }, [
+    addAlert,
+    addErrorAlert,
+    addPrimaryAlert,
+    addInfoAlert,
+    addWarningAlert,
+    easywebtoon,
+  ]);
 
   return (
     <Stack sx={{ height: "inherit" }}>
@@ -159,9 +193,7 @@ function App() {
         id='container'
         maxWidth='md'
         sx={{ flex: 1, p: "0 !important", backgroundColor: "#ccc" }}>
-        <Box>
-          <Header />
-        </Box>
+        <Header />
         <Box mt={2} />
         <Stack alignItems='space-between' gap={1} sx={{ px: 2 }}>
           <Stack

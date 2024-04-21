@@ -29,7 +29,6 @@ export default function AnchorTemporaryDrawer() {
 
   const toggleDrawer =
     (open: boolean) => (event: KeyboardEvent | MouseEvent) => {
-      console.log(event.type)
       if (
         event.type === "keydown" &&
         ((event as KeyboardEvent).key === "Tab" ||
