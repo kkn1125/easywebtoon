@@ -1,5 +1,4 @@
 import { v4 } from "uuid";
-import { AnimatorModule } from "../modules/animator.module";
 
 export class AniDocument {
   id: string = "";
