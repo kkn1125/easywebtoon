@@ -43,66 +43,66 @@ function App() {
         document.body.append(cursor);
       }
     }
-    function handleFakeTouch(e: TouchEvent) {
-      const cursor = document.getElementById("cursor");
-      e.stopPropagation();
-      const { clientX, clientY } = e.touches?.[0] || { clientX: 0, clientY: 0 };
-      const x = clientX;
-      const y = clientY;
-      const target = e.target;
-      const isCanvasHover =
-        target && target instanceof HTMLElement && target.closest("canvas");
-      if (!isCanvasHover) {
-        if (cursor) {
-          cursor.removeAttribute("drawmode");
-          cursor.style.top = -9999999999999 + "px";
-          cursor.style.left = -9999999999999 + "px";
-        }
-        return;
-      }
-      if (cursor) {
-        cursor.setAttribute("drawmode", "");
-        cursor.style.top = y + "px";
-        cursor.style.left = x + "px";
-      } else {
-        const cursor = document.createElement("div");
-        cursor.id = "cursor";
-        document.body.append(cursor);
-      }
-    }
-    function handleFakeTouchStart(e: TouchEvent) {
-      const cursor = document.getElementById("cursor");
-      const { clientX, clientY } = e.touches?.[0] || { clientX: 0, clientY: 0 };
-      const x = clientX;
-      const y = clientY;
-      const target = e.target;
-      const isCanvasHover =
-        target && target instanceof HTMLElement && target.closest("canvas");
-      if (!isCanvasHover) {
-        if (cursor) {
-          cursor.removeAttribute("drawmode");
-          cursor.style.top = -9999999999999 + "px";
-          cursor.style.left = -9999999999999 + "px";
-        }
-        return;
-      }
-      if (cursor) {
-        cursor.setAttribute("drawmode", "");
-        cursor.style.top = y + "px";
-        cursor.style.left = x + "px";
-      } else {
-        const cursor = document.createElement("div");
-        cursor.id = "cursor";
-        document.body.append(cursor);
-      }
-    }
-    window.addEventListener("mousemove", handleFakeMouse);
-    window.addEventListener("touchstart", handleFakeTouchStart);
-    window.addEventListener("touchmove", handleFakeTouch);
+    // function handleFakeTouch(e: TouchEvent) {
+    //   const cursor = document.getElementById("cursor");
+    //   e.stopPropagation();
+    //   const { clientX, clientY } = e.touches?.[0] || { clientX: 0, clientY: 0 };
+    //   const x = clientX;
+    //   const y = clientY;
+    //   const target = e.target;
+    //   const isCanvasHover =
+    //     target && target instanceof HTMLElement && target.closest("canvas");
+    //   if (!isCanvasHover) {
+    //     if (cursor) {
+    //       cursor.removeAttribute("drawmode");
+    //       cursor.style.top = -9999999999999 + "px";
+    //       cursor.style.left = -9999999999999 + "px";
+    //     }
+    //     return;
+    //   }
+    //   if (cursor) {
+    //     cursor.setAttribute("drawmode", "");
+    //     cursor.style.top = y + "px";
+    //     cursor.style.left = x + "px";
+    //   } else {
+    //     const cursor = document.createElement("div");
+    //     cursor.id = "cursor";
+    //     document.body.append(cursor);
+    //   }
+    // }
+    // function handleFakeTouchStart(e: TouchEvent) {
+    //   const cursor = document.getElementById("cursor");
+    //   const { clientX, clientY } = e.touches?.[0] || { clientX: 0, clientY: 0 };
+    //   const x = clientX;
+    //   const y = clientY;
+    //   const target = e.target;
+    //   const isCanvasHover =
+    //     target && target instanceof HTMLElement && target.closest("canvas");
+    //   if (!isCanvasHover) {
+    //     if (cursor) {
+    //       cursor.removeAttribute("drawmode");
+    //       cursor.style.top = -9999999999999 + "px";
+    //       cursor.style.left = -9999999999999 + "px";
+    //     }
+    //     return;
+    //   }
+    //   if (cursor) {
+    //     cursor.setAttribute("drawmode", "");
+    //     cursor.style.top = y + "px";
+    //     cursor.style.left = x + "px";
+    //   } else {
+    //     const cursor = document.createElement("div");
+    //     cursor.id = "cursor";
+    //     document.body.append(cursor);
+    //   }
+    // }
+    window.addEventListener("pointermove", handleFakeMouse);
+    // window.addEventListener("touchstart", handleFakeTouchStart);
+    // window.addEventListener("touchmove", handleFakeTouch);
     return () => {
-      window.removeEventListener("mousemove", handleFakeMouse);
-      window.removeEventListener("touchstart", handleFakeTouchStart);
-      window.removeEventListener("touchmove", handleFakeTouch);
+      window.removeEventListener("pointermove", handleFakeMouse);
+      // window.removeEventListener("touchstart", handleFakeTouchStart);
+      // window.removeEventListener("touchmove", handleFakeTouch);
     };
   }, []);
 
@@ -161,9 +161,9 @@ function App() {
     easywebtoon.on("clear-copy-page", ({ message }) => {
       addInfoAlert(message);
     });
-    easywebtoon.on("paste-page", ({ message }) => {
-      addInfoAlert(message);
-    });
+    // easywebtoon.on("paste-page", ({ message }) => {
+    //   addInfoAlert(message);
+    // });
     easywebtoon.on("no-copy-page", ({ message }) => {
       addWarningAlert(message);
     });
@@ -222,9 +222,13 @@ function App() {
               position: "relative",
               border: "1px solid #ccc",
               background: (theme) => theme.palette.background.paper,
-              "& canvas:not(:last-child)": {
+              "& canvas:not(:last-of-type)": {
                 position: "absolute",
                 opacity: "0.5",
+                zIndex: 1,
+              },
+              "& canvas:last-of-type": {
+                zIndex: 0,
               },
             }}
           />

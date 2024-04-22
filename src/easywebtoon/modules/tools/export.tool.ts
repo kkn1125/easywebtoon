@@ -6,6 +6,7 @@ export const ExportTools = {
     tagName: "button",
     dataType: "gif-repeat",
     innerText: `GIF 재생 반복`,
+    active: true,
   },
   useRepeatDelay: {
     tagName: "button",

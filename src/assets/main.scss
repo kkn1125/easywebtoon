@@ -3,6 +3,10 @@
 @use "sass:list";
 @use "sass:map";
 
+// * {
+//   touch-action: none;
+// }
+
 @mixin radius($radius...) {
   border-radius: $radius;
   -webkit-border-radius: $radius;

@@ -67,8 +67,6 @@ export class EventModule extends IModule<EventModuleType> {
 
   isMobile: [boolean, boolean] = [false, false];
 
-  deadzone: boolean = false;
-
   constructor(parent: EasyWebtoon) {
     super();
     this.parent = parent;
@@ -91,6 +89,13 @@ export class EventModule extends IModule<EventModuleType> {
 
     if (!thicknessBar) throw "No thickness Element.";
 
+    if (this.modules.toolModule.exportTools.gifRepeat.active) {
+      this.toggleRepeatable();
+    }
+    if (!this.modules.toolModule.guideTools.showBothSideLines.active) {
+      this.toggleGuideBothSideLines();
+    }
+
     this.setupListener();
     this.setLineWidth(+(thicknessBar.value = "" + this.thickness));
     this.resizeCanvas();
@@ -102,6 +107,9 @@ export class EventModule extends IModule<EventModuleType> {
       window.removeEventListener(name, event);
     }
     this.eventList = [];
+    document.querySelectorAll("canvas").forEach((canvas) => {
+      canvas.remove();
+    });
     this.parent.eventListeners["destroy"]?.forEach((cb) => {
       cb();
     });
@@ -113,25 +121,31 @@ export class EventModule extends IModule<EventModuleType> {
         name: this.parent.EMMIT_TYPE,
         event: this.handleCommandEasyWebtoon.bind(this) as EventListener,
       },
+      // {
+      //   name: "touchstart",
+      //   event: this.startDrawingTouch.bind(this) as EventListener,
+      // },
       {
-        name: "touchstart",
-        event: this.startDrawingTouch.bind(this) as EventListener,
-      },
-      {
-        name: "mousedown",
+        name: "pointerdown",
         event: this.startDrawing.bind(this) as EventListener,
       },
+      // {
+      //   name: "touchend",
+      //   event: this.stopDrawingMobile.bind(this) as EventListener,
+      // },
       {
-        name: "touchend",
-        event: this.stopDrawingMobile.bind(this) as EventListener,
+        name: "pointerup",
+        event: this.stopDrawing.bind(this) as EventListener,
       },
-      { name: "mouseup", event: this.stopDrawing.bind(this) as EventListener },
-      { name: "mouseout", event: this.stopDrawing.bind(this) as EventListener },
-      { name: "mousemove", event: this.draw.bind(this) as EventListener },
       {
-        name: "touchmove",
-        event: this.drawMobile.bind(this) as EventListener,
+        name: "pointerout",
+        event: this.stopDrawing.bind(this) as EventListener,
       },
+      { name: "pointermove", event: this.draw.bind(this) as EventListener },
+      // {
+      //   name: "pointermove",
+      //   event: this.drawMobile.bind(this) as EventListener,
+      // },
       {
         name: "page-update",
         event: this.updatePageView.bind(this) as EventListener,
@@ -244,7 +258,13 @@ export class EventModule extends IModule<EventModuleType> {
     const closest = (el: HTMLElement, dataset: string, value: string) =>
       el.closest(`[data-${dataset}="${value}"]`);
 
-    if (this.isPlaying) return;
+    if (this.isPlaying) {
+      /* sequence tool functions */
+      if (closest(target, "tool", "play")) {
+        this.handlePlay();
+      }
+      return;
+    }
 
     if (target) {
       /* localStorage functions */
@@ -471,7 +491,7 @@ export class EventModule extends IModule<EventModuleType> {
       height: this.modules.animatorModule.canvas.height,
       repeat: this.gifRepeatable ? 0 : -1,
     });
-    const frames = this.modules.dataModule.currentToon.document.getFrames();
+    const pages = this.modules.dataModule.currentToon.document.pages;
     let current = 0;
 
     const percentage = document.createElement("div");
@@ -503,23 +523,30 @@ export class EventModule extends IModule<EventModuleType> {
       width: 30vw;
     `;
 
-    // progress.max = frames.length;
+    // progress.max = pages.length;
 
     document.body.appendChild(progress);
     document.body.appendChild(percentage);
 
-    for (const frame of frames) {
+    this.clearCanvas(this.modules.animatorModule.prevCtx);
+    this.clearCanvas(this.modules.animatorModule.nextCtx);
+    this.clearCanvas(this.modules.animatorModule.ctx);
+
+    // this.handlePlay()
+
+    for (const page of pages) {
       const imageFrame = await this.modules.animatorModule.renderFrame(
-        frame,
+        page,
         this.modules.dataModule.currentToon.document.scale,
         this.modules.animatorModule.ctx
       );
+      // document.body.append(imageFrame);
       current += 1;
       const value =
-        "" + parseFloat(((current / frames.length) * 100).toFixed(2)) + "%";
+        "" + parseFloat(((current / pages.length) * 100).toFixed(2)) + "%";
       progressValue.style.width = value;
       percentage.innerText = value;
-      if (this.useRepeatDelay && frames[frames.length - 1] === frame) {
+      if (this.useRepeatDelay && pages[pages.length - 1] === page) {
         gif.addFrame(imageFrame, {
           delay: this.repeatDelay * 1000,
         });
@@ -530,13 +557,17 @@ export class EventModule extends IModule<EventModuleType> {
       }
     }
 
+    const wait = window.setTimeout(() => {
+      percentage.innerText = "GIF 파일을 준비 중입니다. 잠시만 기다려 주세요.";
+    }, 1000);
+
     gif.on("finished", (blob) => {
+      clearTimeout(wait);
       const downloadUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.download = "result.gif";
+      a.download = this.modules.dataModule.currentToon.id + ".gif";
       a.href = downloadUrl;
       a.click();
-      URL.revokeObjectURL(downloadUrl);
       a.remove();
       percentage?.remove();
       progress?.remove();
@@ -544,7 +575,9 @@ export class EventModule extends IModule<EventModuleType> {
       this.parent.eventListeners["export-gif"]?.forEach((cb) => {
         cb({ message: ERROR_CODE["g001"] });
       });
+      URL.revokeObjectURL(downloadUrl);
     });
+
     gif.render();
   }
 
@@ -573,6 +606,7 @@ export class EventModule extends IModule<EventModuleType> {
         <path fill-rule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clip-rule="evenodd" />
         </svg>`;
       });
+
       await this.modules.animatorModule.playSequences(
         this.modules.dataModule.currentToon,
         this.modules.animatorModule.ctx
@@ -738,6 +772,7 @@ export class EventModule extends IModule<EventModuleType> {
   }
 
   private startDrawing(e: MouseEvent) {
+    if (this.isPlaying) return;
     if (this.isMobile[0]) return;
 
     const target = e.target;
@@ -780,88 +815,70 @@ export class EventModule extends IModule<EventModuleType> {
     this.modules.dataModule.currentToon.document.startLine();
   }
 
-  private startDrawingTouch(e: TouchEvent) {
-    if (this.mode === "paint") return;
+  // private startDrawingTouch(e: TouchEvent) {
+  //   if (this.mode === "paint") return;
 
-    if (this.isMobile[1]) return;
-    const target = e.target;
+  //   if (this.isMobile[1]) return;
+  //   const target = e.target;
 
-    if (target && !(target instanceof HTMLCanvasElement)) return;
-    this.isMobile[0] = true;
+  //   if (target && !(target instanceof HTMLCanvasElement)) return;
+  //   this.isMobile[0] = true;
 
-    const width =
-      this.modules.animatorModule.canvas.getBoundingClientRect().width;
+  //   const offsetX =
+  //     this.modules.animatorModule.canvas.getBoundingClientRect().left;
+  //   const offsetY =
+  //     this.modules.animatorModule.canvas.getBoundingClientRect().top;
 
-    const offsetX =
-      this.modules.animatorModule.canvas.getBoundingClientRect().left;
-    const offsetY =
-      this.modules.animatorModule.canvas.getBoundingClientRect().top;
+  //   const { clientX, clientY } = e.touches[0];
 
-    const scale = CANVAS_WIDTH / width;
-    this.modules.dataModule.currentToon.document.setScale(scale);
+  //   const x = clientX - offsetX;
+  //   const y = clientY - offsetY;
+  //   const point = { x, y };
+  //   this.lastPoint = point;
 
-    const { clientX, clientY } = e.touches[0];
+  //   this.isDrawing = true;
+  //   this.lastTime = Date.now();
+  //   this.modules.dataModule.currentToon.document.startLine();
+  // }
 
-    const x = clientX - offsetX;
-    const y = clientY - offsetY;
-    const point = { x, y };
-    this.lastPoint = point;
+  // private stopDrawingMobile(_e: TouchEvent) {
+  //   // console.log("mob");
+  //   if (
+  //     (this.modules.dataModule.currentToon.document.getLastLine() ?? [])
+  //       .length === 0
+  //   ) {
+  //     const thickness = this.lineWidth;
+  //     const mode = this.mode;
+  //     this.modules.dataModule.currentToon.document.getLastLine()?.push({
+  //       mode,
+  //       x: this.lastPoint?.x || 0,
+  //       y: this.lastPoint?.y || 0,
+  //       thickness,
+  //     });
+  //   }
 
-    this.isDrawing = true;
-    this.lastTime = Date.now();
-    this.modules.dataModule.currentToon.document.startLine();
-
-    this.deadzone = true;
-    let dead = 0;
-    function clear() {
-      clearInterval(dead);
-    }
-
-    dead = window.setInterval(() => {
-      window.dispatchEvent(new TouchEvent("touchmove"));
-      if (!this.deadzone) {
-        clear();
-      }
-    });
-  }
-
-  private stopDrawingMobile(_e: TouchEvent) {
-    // console.log("mob");
-    if (
-      (this.modules.dataModule.currentToon.document.getLastLine() ?? [])
-        .length === 0
-    ) {
-      const thickness = this.lineWidth;
-      const mode = this.mode;
-      this.modules.dataModule.currentToon.document.getLastLine()?.push({
-        mode,
-        x: this.lastPoint?.x || 0,
-        y: this.lastPoint?.y || 0,
-        thickness,
-      });
-    }
-
-    this.isDrawing = false;
-    this.lastPoint = null;
-    // 빈 라인 배열 정리
-    const isNoLine = this.modules.dataModule.currentToon.document.isNoLine();
-    if (isNoLine) return;
-    const lastLine = this.modules.dataModule.currentToon.document.getLastLine();
-    if (lastLine.length === 0) {
-      this.modules.dataModule.currentToon.document.removeEmptyLine();
-    }
-    // this.isMobile[0] = false;
-    this.isMobile[1] = false;
-    this.renderCanvas();
-  }
+  //   this.isDrawing = false;
+  //   this.lastPoint = null;
+  //   // 빈 라인 배열 정리
+  //   const isNoLine = this.modules.dataModule.currentToon.document.isNoLine();
+  //   if (isNoLine) return;
+  //   const lastLine = this.modules.dataModule.currentToon.document.getLastLine();
+  //   if (lastLine.length === 0) {
+  //     this.modules.dataModule.currentToon.document.removeEmptyLine();
+  //   }
+  //   // this.isMobile[0] = false;
+  //   this.isMobile[1] = false;
+  //   this.renderCanvas();
+  // }
 
   private stopDrawing(_e: MouseEvent) {
+    if (this.isPlaying) return;
+
     if (this.isMobile[0]) {
       this.isMobile[0] = false;
       this.isMobile[1] = false;
       return;
     }
-    // console.log("pc");
 
     if (
       (this.modules.dataModule.currentToon.document.getLastLine() ?? [])
@@ -891,18 +908,14 @@ export class EventModule extends IModule<EventModuleType> {
     this.renderCanvas();
   }
 
-  draw(e: MouseEvent) {
+  draw(e: PointerEvent) {
+    if (this.isPlaying) return;
     if (this.mode === "paint") return;
 
     if (this.isMobile[0]) return;
     if (!this.isDrawing) return;
 
     e.preventDefault();
-
-    const width =
-      this.modules.animatorModule.canvas.getBoundingClientRect().width;
-    const scale = CANVAS_WIDTH / width;
-    this.modules.dataModule.currentToon.document.setScale(scale);
 
     const x = e.offsetX;
     const y = e.offsetY;
@@ -916,40 +929,38 @@ export class EventModule extends IModule<EventModuleType> {
     this.lastRenderCanvas();
   }
 
-  drawMobile(e: TouchEvent) {
-    if (this.mode === "paint") return;
+  // drawMobile(e: PointerEvent) {
+  //   if (this.mode === "paint") return;
 
-    if (this.isMobile[1]) return;
-    if (!this.isDrawing) return;
+  //   if (this.isMobile[1]) return;
+  //   if (!this.isDrawing) return;
 
-    this.deadzone = false;
+  //   const width =
+  //     this.modules.animatorModule.canvas.getBoundingClientRect().width;
 
-    const width =
-      this.modules.animatorModule.canvas.getBoundingClientRect().width;
+  //   const offsetX =
+  //     this.modules.animatorModule.canvas.getBoundingClientRect().left;
+  //   const offsetY =
+  //     this.modules.animatorModule.canvas.getBoundingClientRect().top;
 
-    const offsetX =
-      this.modules.animatorModule.canvas.getBoundingClientRect().left;
-    const offsetY =
-      this.modules.animatorModule.canvas.getBoundingClientRect().top;
+  //   const scale = CANVAS_WIDTH / width;
+  //   this.modules.dataModule.currentToon.document.setScale(scale);
+  //   const clientX = e.clientX;
+  //   const clientY = e.clientY;
 
-    const scale = CANVAS_WIDTH / width;
-    this.modules.dataModule.currentToon.document.setScale(scale);
+  //   const x = clientX - offsetX;
+  //   const y = clientY - offsetY;
+  //   const point = { x, y };
 
-    for (const { clientX, clientY } of e.touches) {
-      const x = clientX - offsetX;
-      const y = clientY - offsetY;
-      const point = { x, y };
+  //   this.lastPoint = point;
+  //   const thickness = this.lineWidth;
+  //   const mode = this.mode;
 
-      this.lastPoint = point;
-      const thickness = this.lineWidth;
-      const mode = this.mode;
-
-      this.modules.dataModule.currentToon.document
-        .getLastLine()
-        .push({ mode, x, y, thickness });
-      this.lastRenderCanvas();
-    }
-  }
+  //   this.modules.dataModule.currentToon.document
+  //     .getLastLine()
+  //     .push({ mode, x, y, thickness });
+  //   this.lastRenderCanvas();
+  // }
 
   lastRenderCanvas() {
     const current = this.modules.dataModule.currentToon;
@@ -957,21 +968,6 @@ export class EventModule extends IModule<EventModuleType> {
       const prevPage = current.document.getPrevPage();
       const nextPage = current.document.getNextPage();
       const page = current.document.getPage();
-      // this.modules.animatorModule.clearCanvas(
-      //   this.modules.animatorModule.prevCtx
-      // );
-      // this.modules.animatorModule.clearCanvas(
-      //   this.modules.animatorModule.nextCtx
-      // );
-      // const image = this.modules.animatorModule.canvas.toDataURL("image/png");
-      // const img = document.createElement("img");
-      // img.src = image;
-      // img.onloadedmetadata = () => {
-      //   this.modules.animatorModule.clearCanvas(
-      //     this.modules.animatorModule.ctx
-      //   );
-      //   this.modules.animatorModule.ctx.drawImage(img, 0, 0);
-      // };
 
       if (
         !this.modules.animatorModule.rendered[0] &&
@@ -994,26 +990,12 @@ export class EventModule extends IModule<EventModuleType> {
         this.modules.animatorModule.rendered[1] = true;
         this.modules.animatorModule.renderCanvas(
           nextPage,
-          "#72b063",
+          "#bdeab2",
           this.modules.dataModule.currentToon.document.scale,
           this.modules.animatorModule.nextCtx
         );
       }
       if (page) {
-        // const c = document.createElement("canvas");
-        // const ct = c.getContext("2d");
-        // ct?.drawImage(this.modules.animatorModule.canvas, 0, 0);
-        // console.log(c.toDataURL("image/png"));
-
-        // this.modules.animatorModule.ctx.restore();
-
-        // this.modules.animatorModule.clearCanvas(
-        //   this.modules.animatorModule.ctx
-        // );
-
-        // this.modules.animatorModule.ctx.drawImage(c, 0, 0);
-        // c.remove();
-
         this.modules.animatorModule.lastPathRenderCanvas(
           page,
           "#000000ff",
@@ -1049,7 +1031,7 @@ export class EventModule extends IModule<EventModuleType> {
       if (this.showBothSideLines && nextPage) {
         this.modules.animatorModule.renderCanvas(
           nextPage,
-          "#72b063",
+          "#bdeab2",
           this.modules.dataModule.currentToon.document.scale,
           this.modules.animatorModule.nextCtx
         );

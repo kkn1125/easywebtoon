@@ -27,19 +27,19 @@ export class AnimatorModule {
 
   initialize() {
     this.canvas = document.createElement("canvas");
-    this.canvas.id = "#app";
+    this.canvas.id = "app";
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.ctx.imageSmoothingEnabled = false;
+    this.ctx.imageSmoothingEnabled = true;
 
     this.prevCanvas = document.createElement("canvas");
-    this.prevCanvas.id = "#prev-canvas";
+    this.prevCanvas.id = "prev-canvas";
     this.prevCtx = this.prevCanvas.getContext("2d") as CanvasRenderingContext2D;
-    this.prevCtx.imageSmoothingEnabled = false;
+    this.prevCtx.imageSmoothingEnabled = true;
 
     this.nextCanvas = document.createElement("canvas");
-    this.nextCanvas.id = "#next-canvas";
+    this.nextCanvas.id = "next-canvas";
     this.nextCtx = this.nextCanvas.getContext("2d") as CanvasRenderingContext2D;
-    this.nextCtx.imageSmoothingEnabled = false;
+    this.nextCtx.imageSmoothingEnabled = true;
 
     // this.status = 1;
     this.parent.eventListeners["animator-initialized"]?.forEach((cb) => {
@@ -145,7 +145,6 @@ export class AnimatorModule {
       ctx.lineCap = "round";
       ctx.strokeStyle = color;
       ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = "source-over";
 
       ctx.beginPath();
       path.forEach((point, index) => {
@@ -165,7 +164,11 @@ export class AnimatorModule {
         // }
 
         if (point.mode === "erase") {
-          ctx.strokeStyle = "#ffffffff";
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.strokeStyle = "#ffffff";
+        } else {
+          ctx.globalCompositeOperation = "color";
+          ctx.strokeStyle = color;
         }
         ctx.lineWidth = point.thickness;
         if (index === 0) {
@@ -196,7 +199,6 @@ export class AnimatorModule {
     ctx.lineCap = "round";
     ctx.strokeStyle = color;
     ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = "source-over";
 
     ctx.beginPath();
     path.forEach((point, index) => {
@@ -216,7 +218,11 @@ export class AnimatorModule {
       // }
 
       if (point.mode === "erase") {
-        ctx.strokeStyle = "#ffffffff";
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.strokeStyle = "#ffffff";
+      } else {
+        ctx.globalCompositeOperation = "color";
+        ctx.strokeStyle = color;
       }
       ctx.lineWidth = point.thickness;
       if (index === 0) {
@@ -238,46 +244,51 @@ export class AnimatorModule {
     this.playQueue = [];
   }
 
-  async renderFrame(page: Page, scale: number, ctx: CanvasRenderingContext2D) {
-    let resolver: (value: HTMLImageElement) => void;
-    const promise = new Promise((resolve) => (resolver = resolve));
-    const color = "#000000";
-    const imageFrame = document.createElement("img");
+  renderFrame(page: Page, scale: number, ctx: CanvasRenderingContext2D) {
+    return new Promise<HTMLImageElement>((resolve) => {
+      const color = "#000000";
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    page.forEach((path) => {
-      ctx.lineJoin = "round";
-      ctx.lineCap = "butt";
-      ctx.strokeStyle = color;
-      ctx.globalAlpha = 1;
+      /* global composite operation 초기화 해줘야함. */
       ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      ctx.beginPath();
-      path.forEach((point, index) => {
-        if (point.mode === "erase") {
-          ctx.strokeStyle = "#ffffff";
+      for (const path of page) {
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = 1;
+
+        ctx.beginPath();
+        for (let index = 0; index < path.length; index++) {
+          const point = path[index];
+          if (point.mode === "erase") {
+            ctx.strokeStyle = "#ffffff";
+          }
+          ctx.lineWidth = point.thickness;
+          if (index === 0) {
+            ctx.moveTo(point.x * scale, point.y * scale);
+          } else {
+            ctx.lineTo(point.x * scale, point.y * scale);
+          }
         }
-        ctx.lineWidth = point.thickness;
-        if (index === 0) {
-          ctx.moveTo(point.x * scale, point.y * scale);
-        } else {
+        if (path.length === 1) {
+          const point = path[0];
+          ctx.lineWidth = point.thickness;
           ctx.lineTo(point.x * scale, point.y * scale);
         }
-      });
-      ctx.stroke();
+        ctx.stroke();
+      }
+
+      const imageFrame = document.createElement("img");
+      imageFrame.src = this.canvas.toDataURL("image/png");
+      imageFrame.width = this.canvas.width;
+      imageFrame.height = this.canvas.height;
+      imageFrame.onload = () => {
+        resolve(imageFrame);
+        imageFrame.remove();
+      };
     });
-
-    imageFrame.src = this.canvas.toDataURL("image/jpg");
-
-    imageFrame.width = this.canvas.width;
-    imageFrame.height = this.canvas.height;
-    imageFrame.onload = () => {
-      resolver(imageFrame);
-    };
-
-    return promise;
   }
 
   async playSequences(current: Toon, ctx: CanvasRenderingContext2D) {
@@ -302,6 +313,7 @@ export class AnimatorModule {
   private sleep(time: number) {
     return new Promise((resolve) =>
       setTimeout(() => {
+        // console.log(this.playQueue)
         resolve(true);
       }, time)
     );

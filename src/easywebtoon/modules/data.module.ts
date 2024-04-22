@@ -1,5 +1,5 @@
 import { EasyWebtoon } from "../easy.webtoon";
-import { AUTHOR, VERSION } from "../global/env";
+import { AUTHOR, CANVAS_WIDTH, VERSION } from "../global/env";
 import { ERROR_CODE } from "../models/error.code";
 import { Toon } from "../models/toon";
 
@@ -41,6 +41,15 @@ export class DataModule {
     this.currentToon =
       this.storage.data[currentToonIndex > -1 ? currentToonIndex : 0];
 
+    if (currentToonIndex === -1) {
+      localStorage.setItem(this.STORE_CURRENT_KEY, this.currentToon.id);
+    }
+
+    const width =
+      this.parent.animatorModule.canvas.getBoundingClientRect().width;
+    const scale = CANVAS_WIDTH / width;
+    this.currentToon.document.setScale(scale);
+
     this.save(true);
   }
 
@@ -50,6 +59,11 @@ export class DataModule {
     }
 
     const storage = this.load(true);
+    if (storage.version !== VERSION) {
+      console.warn(
+        "이전 버전에서 생성되었습니다! 이전 버전에 대한 마이그레이션을 지원하는 기능을 추가 중입니다 :)"
+      );
+    }
     this.applyData(storage);
   }
 
@@ -60,6 +74,12 @@ export class DataModule {
   setCurrent(currentToon: Toon) {
     this.currentToon = currentToon;
     localStorage.setItem(this.STORE_CURRENT_KEY, currentToon.id);
+
+    const width =
+      this.parent.animatorModule.canvas.getBoundingClientRect().width;
+    const scale = CANVAS_WIDTH / width;
+    this.currentToon.document.setScale(scale);
+
     this.parent.eventListeners["setCurrentToon"]?.forEach((cb) => {
       cb({ message: ERROR_CODE["t399"] });
     });
@@ -175,7 +195,7 @@ export class DataModule {
       cb({ message: ERROR_CODE["p200"] });
     });
   }
-  
+
   clearCopyPage() {
     localStorage.removeItem(this.COPY_STORE_KEY);
     // console.log("delete copy page!");

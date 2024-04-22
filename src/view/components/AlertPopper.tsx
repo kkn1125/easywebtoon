@@ -95,6 +95,7 @@ function AlertPopper() {
         bottom: 54 + 10,
         left: "50%",
         transform: "translateX(-50%)",
+        zIndex: 500,
       }}>
       {alerts
         .slice(0, 4)
