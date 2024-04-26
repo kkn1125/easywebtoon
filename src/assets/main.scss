@@ -3,9 +3,9 @@
 @use "sass:list";
 @use "sass:map";
 
-// * {
-//   touch-action: none;
-// }
+* {
+  touch-action: none;
+}
 
 @mixin radius($radius...) {
   border-radius: $radius;
@@ -78,6 +78,7 @@ body,
   mix-blend-mode: exclusion;
 
   svg {
+    pointer-events: none;
     color: white;
     display: none;
     position: absolute;
@@ -91,6 +92,7 @@ body,
     @include filter(drop-shadow(3px 0px 3px rgb(0 0 0 / 0.4)));
   }
   &[drawmode] svg {
+    pointer-events: none;
     display: unset;
   }
 }

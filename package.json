@@ -1,7 +1,7 @@
 {
   "main": "src/index.ts",
   "name": "easywebtoon",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "homepage": "https://easywebtoon.kro.kr/",
   "repository": {
     "directory": "github:kkn1125/easywebtoon",

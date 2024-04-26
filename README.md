@@ -12,6 +12,9 @@
 
 ## 업데이트
 
+- 0.1.10
+  - fix
+    - 드래그 이벤트 모바일에서 끊기는 버그 수정
 - 0.1.9
   - fix
     - EasyWebtoon destroy 메서드 실행 시 Canvas Element 초기화 추가
