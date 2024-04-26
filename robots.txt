@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://easywebtoon.kro.kr
+
+# Sitemaps
+Sitemap: https://easywebtoon.kro.kr/sitemap.xml
